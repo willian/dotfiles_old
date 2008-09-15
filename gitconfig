@@ -1,0 +1,13 @@
+[user]
+	name = Nando Vieira
+	email = fnando.vieira@gmail.com
+[color]
+	diff = auto
+	status = auto
+	branch = auto
+[alias]
+	sh = !git-sh
+	ci = commit
+	co = checkout
+	b = branch
+	st = status

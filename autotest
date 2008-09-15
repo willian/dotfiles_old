@@ -1,0 +1,17 @@
+require 'test_notifier/autotest'
+require 'autotest/timestamp'
+
+Autotest.add_hook :initialize do |at|
+ at.sleep = 5
+
+ # Ignore files with suffix
+ %w{.svn .hg .git .erb .png .txt .sh .project .rjs .rake .jpg .xml .xlst}.each do |exception| 
+   at.add_exception(exception)
+ end
+ 
+ # run autotest for specific directory
+ # autotest models
+ unless ARGV.empty?
+   at.find_directories = ARGV.length == 1 ? ["spec/#{ARGV.first}","app/#{ARGV.first}"] : ARGV.dup
+ end
+end

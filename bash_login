@@ -1,0 +1,5 @@
+export PATH="/usr/local/bin:/usr/local/sbin:/usr/local/mysql/bin:$PATH"
+export CLICOLOR=1
+export SVN_EDITOR=vim
+export EVENT_NOKQUEUE=1
+export HISTCONTROL=erasedups
