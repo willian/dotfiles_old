@@ -1,5 +1,5 @@
-Terminal tips
-=============
+Terminal bindings
+=================
 
 * `Ctrl-a` - Move to the start of the line.
 * `Ctrl-e` - Move to the end of the line.
