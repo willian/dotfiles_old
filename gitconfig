@@ -11,3 +11,7 @@
 	co = checkout
 	b = branch
 	st = status
+	who = shortlog -s --
+	fl = log -p
+[core]
+	editor = mate -w
