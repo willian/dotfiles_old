@@ -5,6 +5,7 @@ export SVN_EDITOR="mate -w"
 export HISTCONTROL=erasedups
 export GREP_OPTIONS="--color=auto"
 export GREP_COLOR="4;33"
+export CDPATH=.:~:~/Sites:~/Sites/github:/Library/Ruby/Gems/1.8/gems/
 
 source ~/.git_completion.sh
 source ~/.bash_completion.sh
