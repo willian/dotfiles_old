@@ -3,6 +3,8 @@ export EVENT_NOKQUEUE=1
 export MANPATH=/usr/local/git/man:$MANPATH
 export SVN_EDITOR="mate -w"
 export HISTCONTROL=erasedups
+export GREP_OPTIONS="--color=auto"
+export GREP_COLOR="4;33"
 
 source ~/.git-completion.sh
 PS1='\n[\u] \[\033[1;33m\]\w\a\[\033[0m\]$(__git_ps1 " \[\033[1;32m\](%s)\[\033[0m\]")\n\$ '
@@ -10,3 +12,4 @@ PS1='\n[\u] \[\033[1;33m\]\w\a\[\033[0m\]$(__git_ps1 " \[\033[1;32m\](%s)\[\033[
 alias bbs="cd ~/Sites/blogblogs"
 alias spesa="cd ~/Sites/spesa"
 alias ls="ls -G"
+alias colors="sh ~/.colors.sh"
