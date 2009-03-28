@@ -19,3 +19,7 @@ alias colors="sh ~/.colors.sh"
 alias psgrep="ps aux | egrep"
 alias showip="ifconfig | grep broadcast | sed 's/.*inet \(.*\) netmask.*/\1/'"
 alias myip="curl http://www.whatismyip.com/automation/n09230945.asp"
+alias ..="cd .."
+
+# list directory after cd
+cd() { builtin cd "${@:-$HOME}" && ls; }
