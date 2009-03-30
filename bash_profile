@@ -23,3 +23,9 @@ alias ..="cd .."
 
 # list directory after cd
 cd() { builtin cd "${@:-$HOME}" && ls; }
+
+# enter a recently created directory
+mkdir() { /bin/mkdir $@ && eval cd "\$$#"; }
+
+# complete rake tasks
+complete -C ~/.rake_completion.rb -o default rake
