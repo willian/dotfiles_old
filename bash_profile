@@ -17,7 +17,9 @@ alias colors="sh ~/.colors.sh"
 alias psgrep="ps aux | egrep"
 alias showip="ifconfig | grep broadcast | sed 's/.*inet \(.*\) netmask.*/\1/'"
 alias myip="curl http://www.whatismyip.com/automation/n09230945.asp"
-alias ..="cd .."
+
+# reload source
+reload() { source ~/.bash_profile; }
 
 # list directory after cd
 cd() { builtin cd "${@:-$HOME}" && ls; }
@@ -27,3 +29,29 @@ mkdir() { /bin/mkdir $@ && eval cd "\$$#"; }
 
 # complete rake tasks
 complete -C ~/.rake_completion.rb -o default rake
+
+# github repository cloning
+# usage: 
+#    gh has_permalink       ~> will clone $USER repositories
+#    gh username repository ~> will clone someone else's
+github() {
+    if [ $# = 1 ]; then
+        builtin cd ~/Sites/github;
+        git clone git@github.com:$USER/$1.git;
+        builtin cd $1 && ls;
+    elif [ $# = 2 ]; then
+        builtin cd ~/Sites/github;
+        git clone git://github.com/$1/$2.git;
+        builtin cd $2 && ls;
+    else
+        echo "Usage:";
+        echo "    github <repo>        ~> will clone $USER's <repo>";
+        echo "    github <user> <repo> ~> will clone <user>'s <repo>";
+    fi
+}
+
+# taken from http://github.com/bryanl/zshkit/
+github-url () { git config remote.origin.url | sed -En 's/git(@|:\/\/)github.com(:|\/)(.+)\/(.+).git/https:\/\/github.com\/\3\/\4/p'; }
+github-go () { open $(github-url); }
+git-scoreboard () { git log | grep '^Author' | sort | uniq -ci | sort -r; }
+manp () { man -t $* | ps2pdf - - | open -f -a Preview; }
