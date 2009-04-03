@@ -3,6 +3,7 @@ require "irb/completion"
 require "irb/ext/save-history"
 require "pp"
 require "wirble"
+require "ruby-debug"
  
 ARGV.concat [ "--readline", "--prompt-mode", "simple" ]
  
