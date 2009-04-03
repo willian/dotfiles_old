@@ -13,10 +13,12 @@ source ~/.bash_completion.sh
 PS1='\n[\u] \[\033[1;33m\]\w\a\[\033[0m\]$(__git_ps1 " \[\033[1;32m\](%s)\[\033[0m\]")\n\$ '
 
 alias ls="ls -G"
+alias ll="ls -Glahs"
 alias colors="sh ~/.colors.sh"
 alias psgrep="ps aux | egrep"
 alias showip="ifconfig | grep broadcast | sed 's/.*inet \(.*\) netmask.*/\1/'"
 alias myip="curl http://www.whatismyip.com/automation/n09230945.asp"
+alias lock="/System/Library/CoreServices/Menu\ Extras/user.menu/Contents/Resources/CGSession -suspend"
 
 # reload source
 reload() { source ~/.bash_profile; }
@@ -55,3 +57,5 @@ github-url () { git config remote.origin.url | sed -En 's/git(@|:\/\/)github.com
 github-go () { open $(github-url); }
 git-scoreboard () { git log | grep '^Author' | sort | uniq -ci | sort -r; }
 manp () { man -t $* | ps2pdf - - | open -f -a Preview; }
+
+# PROMPT_COMMAND=prompt
