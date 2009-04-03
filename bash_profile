@@ -20,6 +20,15 @@ alias showip="ifconfig | grep broadcast | sed 's/.*inet \(.*\) netmask.*/\1/'"
 alias myip="curl http://www.whatismyip.com/automation/n09230945.asp"
 alias lock="/System/Library/CoreServices/Menu\ Extras/user.menu/Contents/Resources/CGSession -suspend"
 
+shopt -s cdspell
+shopt -s nocaseglob
+shopt -s checkwinsize
+shopt -s dotglob
+shopt -s extglob
+shopt -s histverify
+set -o ignoreeof
+unset MAILCHECK
+
 # reload source
 reload() { source ~/.bash_profile; }
 
@@ -57,5 +66,13 @@ github-url () { git config remote.origin.url | sed -En 's/git(@|:\/\/)github.com
 github-go () { open $(github-url); }
 git-scoreboard () { git log | grep '^Author' | sort | uniq -ci | sort -r; }
 manp () { man -t $* | ps2pdf - - | open -f -a Preview; }
+
+export LESS_TERMCAP_mb=$'\E[04;33m'
+export LESS_TERMCAP_md=$'\E[04;33m'
+export LESS_TERMCAP_me=$'\E[0m'
+export LESS_TERMCAP_se=$'\E[0m'
+export LESS_TERMCAP_so=$'\E[01;44;33m'
+export LESS_TERMCAP_ue=$'\E[0m'
+export LESS_TERMCAP_us=$'\E[00;32m'
 
 # PROMPT_COMMAND=prompt

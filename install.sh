@@ -9,6 +9,9 @@ cp pezrc ~/.pezrc
 cp rake_completion.rb ~/.rake_completion.rb
 cp gemrc ~/.gemrc
 
+mkdir -p ~/.ssh
+cp sshconfig ~/.ssh/config
+
 chmod 755 ~/.rake_completion.rb
 
 sudo mkdir -p /etc/bash_completion
