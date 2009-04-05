@@ -3,14 +3,26 @@ export EVENT_NOKQUEUE=1
 export MANPATH=/usr/local/git/man:$MANPATH
 export SVN_EDITOR="mate -w"
 export HISTCONTROL=erasedups
+export HISTFILESIZE=100000
+export HISTSIZE=${HISTFILESIZE}
 export GREP_OPTIONS="--color=auto"
 export GREP_COLOR="4;33"
 export CDPATH=.:~:~/Sites:~/Sites/github:/Library/Ruby/Gems/1.8/gems/
 
+# Colours
+BLUE="\[\033[0;34m\]"
+NO_COLOR="\[\e[0m\]"
+GRAY="\[\033[1;30m\]"
+GREEN="\[\033[0;32m\]"
+LIGHT_GRAY="\[\033[0;37m\]"
+LIGHT_GREEN="\[\033[1;32m\]"
+LIGHT_RED="\[\033[1;31m\]"
+RED="\[\033[0;31m\]"
+WHITE="\[\033[1;37m\]"
+YELLOW="\[\033[0;33m\]"
+
 source ~/.git_completion.sh
 source ~/.bash_completion.sh
-
-PS1='\n[\u] \[\033[1;33m\]\w\a\[\033[0m\]$(__git_ps1 " \[\033[1;32m\](%s)\[\033[0m\]")\n\$ '
 
 alias ls="ls -G"
 alias ll="ls -Glahs"
@@ -19,6 +31,8 @@ alias psgrep="ps aux | egrep"
 alias showip="ifconfig | grep broadcast | sed 's/.*inet \(.*\) netmask.*/\1/'"
 alias myip="curl http://www.whatismyip.com/automation/n09230945.asp"
 alias lock="/System/Library/CoreServices/Menu\ Extras/user.menu/Contents/Resources/CGSession -suspend"
+alias quicksilver="open /Applications/Quicksilver.app"
+alias qs="quicksilver"
 
 shopt -s cdspell
 shopt -s nocaseglob
@@ -37,6 +51,14 @@ cd() { builtin cd "${@:-$HOME}" && ls; }
 
 # enter a recently created directory
 mkdir() { /bin/mkdir $@ && eval cd "\$$#"; }
+
+# get the tinyurl
+tinyurl () {
+    local tmp=/tmp/tinyurl
+    rm $tmp 2>1 /dev/null
+    wget "http://tinyurl.com/api-create.php?url=${1}" -O $tmp 2>1 /dev/null
+    cat $tmp | pbcopy
+}
 
 # complete rake tasks
 complete -C ~/.rake_completion.rb -o default rake
@@ -61,6 +83,51 @@ github() {
     fi
 }
 
+git () {
+    GIT=`which git` 
+    
+    if [ "$1" = "add" ]; then
+        $GIT $@ && $GIT status
+    else
+        $GIT $@
+    fi
+}
+
+git-prompt () {
+    local BRANCH=`git branch 2> /dev/null | grep \* | sed 's/* //'`
+    local STATUS=`git status 2>/dev/null`
+    local PROMPT_COLOR=$GREEN
+    local STATE=" "
+    local BEHIND="# Your branch is behind"
+    local AHEAD="# Your branch is ahead"
+    local UNTRACKED="# Untracked files"
+    local DIVERGED="# Your branch and (.*) have diverged"
+    
+    if [ "$BRANCH" != "" ]; then
+        if [[ "$STATUS" =~ "$DIVERGED" ]]; then
+            PROMPT_COLOR=$RED
+            STATE="${STATE}${RED}↕${NO_COLOR}"
+        elif [[ "$STATUS" =~ "$BEHIND" ]]; then
+            PROMPT_COLOR=$RED
+            STATE="${STATE}${RED}↓${NO_COLOR}"
+        elif [[ "$STATUS" =~ "$AHEAD" ]]; then
+            PROMPT_COLOR=$RED
+            STATE="${STATE}${RED}↑${NO_COLOR}"
+        else
+            PROMPT_COLOR=$GREEN
+            STATE=""
+        fi
+        
+        if [[ "$STATUS" =~ "$UNTRACKED" ]]; then
+            STATE="${STATE}${YELLOW}✷${NO_COLOR}"
+        fi
+        
+        PS1="\n[${PROMPT_COLOR}${BRANCH}${NO_COLOR}${STATE}] ${YELLOW}\w\a${NO_COLOR}\n$ "
+    else
+        PS1="\n[\u] ${YELLOW}\w\a${NO_COLOR}\n\$ "
+    fi
+}
+
 # taken from http://github.com/bryanl/zshkit/
 github-url () { git config remote.origin.url | sed -En 's/git(@|:\/\/)github.com(:|\/)(.+)\/(.+).git/https:\/\/github.com\/\3\/\4/p'; }
 github-go () { open $(github-url); }
@@ -75,4 +142,4 @@ export LESS_TERMCAP_so=$'\E[01;44;33m'
 export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[00;32m'
 
-# PROMPT_COMMAND=prompt
+PROMPT_COMMAND=git-prompt
