@@ -39,7 +39,6 @@ shopt -s nocaseglob
 shopt -s checkwinsize
 shopt -s dotglob
 shopt -s extglob
-shopt -s histverify
 set -o ignoreeof
 unset MAILCHECK
 
@@ -65,8 +64,9 @@ complete -C ~/.rake_completion.rb -o default rake
 
 # github repository cloning
 # usage: 
-#    gh has_permalink       ~> will clone $USER repositories
-#    gh username repository ~> will clone someone else's
+#    github has_permalink       ~> will clone $USER repositories
+#    github username repository ~> will clone someone else's
+#    github username repository path ~> will clone someone else's
 github() {
     if [ $# = 1 ]; then
         builtin cd ~/Sites/github;
@@ -76,20 +76,15 @@ github() {
         builtin cd ~/Sites/github;
         git clone git://github.com/$1/$2.git;
         builtin cd $2 && ls;
+    elif [ $# = 3 ]; then
+        builtin cd $3;
+        git clone git://github.com/$1/$2.git;
+        builtin cd $2 && ls;
     else
         echo "Usage:";
         echo "    github <repo>        ~> will clone $USER's <repo>";
         echo "    github <user> <repo> ~> will clone <user>'s <repo>";
-    fi
-}
-
-git () {
-    GIT=`which git` 
-    
-    if [ "$1" = "add" ]; then
-        $GIT $@ && $GIT status
-    else
-        $GIT $@
+        echo "    github <user> <repo> <path> ~> will clone <user>'s <repo> at <path>";
     fi
 }
 
@@ -102,6 +97,7 @@ git-prompt () {
     local AHEAD="# Your branch is ahead"
     local UNTRACKED="# Untracked files"
     local DIVERGED="# Your branch and (.*) have diverged"
+    local CHANGED="# Changed but not updated"
     
     if [ "$BRANCH" != "" ]; then
         if [[ "$STATUS" =~ "$DIVERGED" ]]; then
@@ -113,6 +109,9 @@ git-prompt () {
         elif [[ "$STATUS" =~ "$AHEAD" ]]; then
             PROMPT_COLOR=$RED
             STATE="${STATE}${RED}↑${NO_COLOR}"
+        elif [[ "$STATUS" =~ "$CHANGED" ]]; then
+            PROMPT_COLOR=$RED
+            STATE=""
         else
             PROMPT_COLOR=$GREEN
             STATE=""
@@ -122,7 +121,7 @@ git-prompt () {
             STATE="${STATE}${YELLOW}✷${NO_COLOR}"
         fi
         
-        PS1="\n[${PROMPT_COLOR}${BRANCH}${NO_COLOR}${STATE}] ${YELLOW}\w\a${NO_COLOR}\n$ "
+        PS1="\n[\u] ${YELLOW}\w\a${NO_COLOR} (${PROMPT_COLOR}${BRANCH}${NO_COLOR}${STATE})\n$ "
     else
         PS1="\n[\u] ${YELLOW}\w\a${NO_COLOR}\n\$ "
     fi
