@@ -66,25 +66,17 @@ complete -C ~/.rake_completion.rb -o default rake
 # usage: 
 #    github has_permalink       ~> will clone $USER repositories
 #    github username repository ~> will clone someone else's
-#    github username repository path ~> will clone someone else's
 github() {
     if [ $# = 1 ]; then
-        builtin cd ~/Sites/github;
         git clone git@github.com:$USER/$1.git;
         builtin cd $1 && ls;
     elif [ $# = 2 ]; then
-        builtin cd ~/Sites/github;
-        git clone git://github.com/$1/$2.git;
-        builtin cd $2 && ls;
-    elif [ $# = 3 ]; then
-        builtin cd $3;
         git clone git://github.com/$1/$2.git;
         builtin cd $2 && ls;
     else
         echo "Usage:";
         echo "    github <repo>        ~> will clone $USER's <repo>";
         echo "    github <user> <repo> ~> will clone <user>'s <repo>";
-        echo "    github <user> <repo> <path> ~> will clone <user>'s <repo> at <path>";
     fi
 }
 
@@ -98,6 +90,7 @@ git-prompt () {
     local UNTRACKED="# Untracked files"
     local DIVERGED="# Your branch and (.*) have diverged"
     local CHANGED="# Changed but not updated"
+    local TO_BE_COMMITED="# Changes to be committed"
     
     if [ "$BRANCH" != "" ]; then
         if [[ "$STATUS" =~ "$DIVERGED" ]]; then
@@ -112,13 +105,16 @@ git-prompt () {
         elif [[ "$STATUS" =~ "$CHANGED" ]]; then
             PROMPT_COLOR=$RED
             STATE=""
+        elif [[ "$STATUS" =~ "$TO_BE_COMMITED" ]]; then
+            PROMPT_COLOR=$RED
+            STATE=""
         else
             PROMPT_COLOR=$GREEN
             STATE=""
         fi
         
         if [[ "$STATUS" =~ "$UNTRACKED" ]]; then
-            STATE="${STATE}${YELLOW}✷${NO_COLOR}"
+            STATE="${STATE}${YELLOW}*${NO_COLOR}"
         fi
         
         PS1="\n[\u] ${YELLOW}\w\a${NO_COLOR} (${PROMPT_COLOR}${BRANCH}${NO_COLOR}${STATE})\n$ "
