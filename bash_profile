@@ -8,6 +8,7 @@ export HISTSIZE=${HISTFILESIZE}
 export GREP_OPTIONS="--color=auto"
 export GREP_COLOR="4;33"
 export CDPATH=.:~:~/Sites:~/Sites/github:/Library/Ruby/Gems/1.8/gems/
+export ARCHFLAGS="-arch i386"
 
 # Colours
 BLUE="\[\033[0;34m\]"
@@ -88,7 +89,7 @@ git-prompt () {
     local BEHIND="# Your branch is behind"
     local AHEAD="# Your branch is ahead"
     local UNTRACKED="# Untracked files"
-    local DIVERGED="# Your branch and (.*) have diverged"
+    local DIVERGED="have diverged"
     local CHANGED="# Changed but not updated"
     local TO_BE_COMMITED="# Changes to be committed"
     
