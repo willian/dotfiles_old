@@ -14,4 +14,4 @@
 	who = shortlog -s --
 	fl = log -p
 [core]
-	editor = mate -w
+	editor = mate -wl1

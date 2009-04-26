@@ -1,7 +1,8 @@
 export PATH="/usr/local/git/bin:/usr/local/bin:/usr/local/sbin:/usr/local/mysql/bin:$PATH"
 export EVENT_NOKQUEUE=1
 export MANPATH=/usr/local/git/man:$MANPATH
-export SVN_EDITOR="mate -w"
+export EDITOR="mate -wl1"
+export SVN_EDITOR="mate -wl1"
 export HISTCONTROL=erasedups
 export HISTFILESIZE=100000
 export HISTSIZE=${HISTFILESIZE}
