@@ -5,6 +5,7 @@
 	diff = auto
 	status = auto
 	branch = auto
+	ui = true
 [alias]
 	sh = !git-sh
 	ci = commit
@@ -15,3 +16,5 @@
 	fl = log -p
 [core]
 	editor = mate -wl1
+[help]
+	autocorrect = 1
