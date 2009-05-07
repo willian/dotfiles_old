@@ -35,6 +35,7 @@ alias myip="curl http://www.whatismyip.com/automation/n09230945.asp"
 alias lock="/System/Library/CoreServices/Menu\ Extras/user.menu/Contents/Resources/CGSession -suspend"
 alias quicksilver="open /Applications/Quicksilver.app"
 alias qs="quicksilver"
+alias top="top -o cpu"
 
 shopt -s cdspell
 shopt -s nocaseglob
