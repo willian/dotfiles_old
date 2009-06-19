@@ -8,6 +8,7 @@ cp irbc ~/.irbc
 cp pezrc ~/.pezrc
 cp rake_completion.rb ~/.rake_completion.rb
 cp gemrc ~/.gemrc
+cp gitignore ~/.gitignore
 
 mkdir -p ~/.ssh
 cp sshconfig ~/.ssh/config

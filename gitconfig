@@ -16,5 +16,6 @@
 	fl = log -p
 [core]
 	editor = mate -wl1
+	excludefile = /Users/fnando/.gitignore
 [help]
 	autocorrect = 1
