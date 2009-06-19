@@ -1,4 +1,4 @@
-export PATH="/usr/local/git/bin:/usr/local/bin:/usr/local/sbin:/usr/local/mysql/bin:$PATH"
+export PATH="~/.scripts:/usr/local/ruby18/bin:/usr/local/git/bin:/usr/local/bin:/usr/local/sbin:/usr/local/mysql/bin:/usr/local/erlang/bin:/usr/local/couchdb/bin:/usr/local/spidermonkey/bin:$PATH"
 export EVENT_NOKQUEUE=1
 export MANPATH=/usr/local/git/man:$MANPATH
 export EDITOR="mate -wl1"
@@ -8,8 +8,9 @@ export HISTFILESIZE=100000
 export HISTSIZE=${HISTFILESIZE}
 export GREP_OPTIONS="--color=auto"
 export GREP_COLOR="4;33"
-export CDPATH=.:~:~/Sites:~/Sites/github:/Library/Ruby/Gems/1.8/gems/
+export CDPATH=.:~:~/Sites:~/Sites/github
 export ARCHFLAGS="-arch i386"
+export CDHISTORY="/tmp/cd-${USER}"
 
 # Colours
 BLUE="\[\033[0;34m\]"
@@ -29,13 +30,15 @@ source ~/.bash_completion.sh
 alias ls="ls -G"
 alias ll="ls -Glahs"
 alias colors="sh ~/.colors.sh"
-alias psgrep="ps aux | egrep"
+alias psgrep="ps aux | egrep -v egrep | egrep"
 alias showip="ifconfig | grep broadcast | sed 's/.*inet \(.*\) netmask.*/\1/'"
 alias myip="curl http://www.whatismyip.com/automation/n09230945.asp"
 alias lock="/System/Library/CoreServices/Menu\ Extras/user.menu/Contents/Resources/CGSession -suspend"
 alias quicksilver="open /Applications/Quicksilver.app"
 alias qs="quicksilver"
 alias top="top -o cpu"
+alias irb="irb --readline --prompt-mode simple"
+alias mysql="mysql --auto-rehash=TRUE"
 
 shopt -s cdspell
 shopt -s nocaseglob
@@ -48,8 +51,15 @@ unset MAILCHECK
 # reload source
 reload() { source ~/.bash_profile; }
 
-# list directory after cd
-cd() { builtin cd "${@:-$HOME}" && ls; }
+# list directory after cd; also save the last directory
+# and open it when a new tab is created
+cd() { 
+    builtin cd "${@:-$HOME}" && ls && pwd > $CDHISTORY;
+}
+
+if [ -f $CDHISTORY ]; then
+    builtin cd `cat $CDHISTORY` && clear
+fi
 
 # enter a recently created directory
 mkdir() { /bin/mkdir $@ && eval cd "\$$#"; }
