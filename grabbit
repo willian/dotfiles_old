@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+
+require "time"
+
+url = ARGV[0]
+
+unless url
+  puts "Usage: grabbit http://example.com"
+  exit 1
+end
+
+`webkit2png --delay=3 -F -o screenshot -W 1280 -D /tmp/ #{url}`
+
+name = url.dup
+name.gsub!(/[^a-z0-9-]/smi, "-")
+name.gsub!(/-+/, "-")
+name.chomp!("-")
+name << "-" + Time.now.strftime("%Y%m%d%H%M%S")
+
+`mv /tmp/screenshot-full.png /tmp/#{name}.png`
+`scp /tmp/#{name}.png simplesideias:f.simplesideias.com.br/ui`
+`rm /tmp/#{name}.png`

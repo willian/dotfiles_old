@@ -10,6 +10,9 @@ cp rake_completion.rb ~/.rake_completion.rb
 cp gemrc ~/.gemrc
 cp gitignore ~/.gitignore
 
+sudo cp grabbit /usr/local/bin
+sudo chmod +x /usr/local/bin/grabbit
+
 mkdir -p ~/.ssh
 cp sshconfig ~/.ssh/config
 
