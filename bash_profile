@@ -1,15 +1,18 @@
-export PATH="~/.scripts:/usr/local/ruby18/bin:/usr/local/git/bin:/usr/local/bin:/usr/local/sbin:/usr/local/mysql/bin:/usr/local/erlang/bin:/usr/local/couchdb/bin:/usr/local/spidermonkey/bin:$PATH"
+export PATH="/usr/local/ruby/active/bin:$PATH"
+export PATH="/usr/local/git/bin:/usr/local/bin:/usr/local/sbin:/usr/local/mysql/bin:$PATH"
+export PATH="/usr/local/erlang/bin:/usr/local/couchdb/bin:/usr/local/spidermonkey/bin:/usr/local/erlang/lib/erlang/lib/rabbitmq_server-1.6.0/sbin:$PATH"
+export PATH="/usr/local/prince/bin:$PATH"
 export EVENT_NOKQUEUE=1
 export MANPATH=/usr/local/git/man:$MANPATH
-export EDITOR="mate -wl1"
-export SVN_EDITOR="mate -wl1"
+export EDITOR="/usr/bin/mate -wl1"
+export SVN_EDITOR="/usr/bin/mate -wl1"
 export HISTCONTROL=erasedups
 export HISTFILESIZE=100000
 export HISTSIZE=${HISTFILESIZE}
 export GREP_OPTIONS="--color=auto"
 export GREP_COLOR="4;33"
 export CDPATH=.:~:~/Sites:~/Sites/github
-export ARCHFLAGS="-arch i386"
+# export ARCHFLAGS="-arch i386"
 export CDHISTORY="/tmp/cd-${USER}"
 
 # Colours
@@ -58,8 +61,45 @@ cd() {
 }
 
 if [ -f $CDHISTORY ]; then
-    builtin cd `cat $CDHISTORY` && clear
+    if [ -d `cat $CDHISTORY` ]; then
+        builtin cd `cat $CDHISTORY` && clear
+    fi
 fi
+
+# Specify which ruby version to use
+# Here's how my ruby is installed:
+#
+#   /usr/local/ruby/1.9.1-p243
+#   /usr/local/ruby/1.8.7-p174
+#   /usr/local/ruby/1.8.6-p383
+#   /usr/local/ruby/active
+#
+# The active directory is a symlink to the active
+# ruby version. This is also on the $PATH.
+#
+#   export PATH="/usr/local/ruby/active/ruby:$PATH"
+use_ruby() {
+  local root="/usr/local/ruby"
+  local version="invalid"
+  
+  if [ "$1" = "191" ]; then
+    version="1.9.1-p243"
+  elif [ "$1" = "187" ]; then
+    version="1.8.7-p174"
+  elif [ "$1" = "186" ]; then
+    version="1.8.6-p383"
+  fi
+  
+  local rubydir="$root/$version"
+  
+  if [ -d $rubydir ]; then
+    echo "Activating Ruby $version"
+    sudo rm $root/active && sudo ln -s $root/$version $root/active
+    ruby -v
+  else
+    echo "Specify a Ruby version: 186, 187, 191"
+  fi
+}
 
 # enter a recently created directory
 mkdir() { /bin/mkdir $@ && eval cd "\$$#"; }
@@ -151,3 +191,7 @@ export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[00;32m'
 
 PROMPT_COMMAND=git-prompt
+
+export RENVDIR="$HOME/.renv"
+export PATH="$RENVDIR/active/bin:$PATH"
+export GEM_PATH="$RENVDIR/active/lib"

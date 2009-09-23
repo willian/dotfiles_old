@@ -1,2 +1,9 @@
-Host spesa.com.br
-  User spesa
+Host spesa
+  HostName spesa.com.br
+
+Host simplesideias
+  HostName simplesideias.com.br
+
+Host parallels
+	Hostname 10.211.55.6
+	User fnando
