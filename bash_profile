@@ -51,6 +51,11 @@ shopt -s extglob
 set -o ignoreeof
 unset MAILCHECK
 
+# start apache from mamp
+mamp() {
+    /Applications/MAMP/Library/bin/apachectl start
+}
+
 # reload source
 reload() { source ~/.bash_profile; }
 
@@ -114,6 +119,14 @@ tinyurl () {
 
 # complete rake tasks
 complete -C ~/.rake_completion.rb -o default rake
+
+# complete renv envs
+_renvcomplete() {
+  COMPREPLY=($(compgen -W "`NAME=${COMP_WORDS[COMP_CWORD]} renv complete`"))
+  return 0
+}
+
+complete -o default -o nospace -F _renvcomplete renv
 
 # github repository cloning
 # usage: 
