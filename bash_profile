@@ -12,8 +12,15 @@ export HISTSIZE=${HISTFILESIZE}
 export GREP_OPTIONS="--color=auto"
 export GREP_COLOR="4;33"
 export CDPATH=.:~:~/Sites:~/Sites/github
-# export ARCHFLAGS="-arch i386"
 export CDHISTORY="/tmp/cd-${USER}"
+
+# Amazon EC2
+export EC2_HOME="/Users/fnando/.ec2"
+export EC2_PRIVATE_KEY="$EC2_HOME/pk.pem"
+export EC2_CERT="$EC2_HOME/cert.pem"
+export EC2_AMI_HOME="$EC2_HOME/ec2-ami-tools"
+export PATH="$EC2_HOME/bin:$EC2_AMI_HOME/bin:$PATH"
+export JAVA_HOME="/Library/Java/Home"
 
 # Colours
 BLUE="\[\033[0;34m\]"
@@ -54,6 +61,7 @@ unset MAILCHECK
 # start apache from mamp
 mamp() {
     /Applications/MAMP/Library/bin/apachectl start
+    ln /tmp/mysql.sock /Applications/MAMP/tmp/mysql/mysql.sock
 }
 
 # reload source
