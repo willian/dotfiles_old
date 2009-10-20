@@ -49,6 +49,8 @@ alias qs="quicksilver"
 alias top="top -o cpu"
 alias irb="irb --readline --prompt-mode simple"
 alias mysql="mysql --auto-rehash=TRUE"
+alias ni="lsof -i -Pn"
+alias search="find vendor/plugins -follow -name '*' | xargs grep "
 
 shopt -s cdspell
 shopt -s nocaseglob
@@ -73,9 +75,11 @@ cd() {
     builtin cd "${@:-$HOME}" && ls && pwd > $CDHISTORY;
 }
 
+dir=$(cat $CDHISTORY)
+
 if [ -f $CDHISTORY ]; then
-    if [ -d `cat $CDHISTORY` ]; then
-        builtin cd `cat $CDHISTORY` && clear
+    if [ -d "$dir" ]; then
+        builtin cd "$dir" && clear
     fi
 fi
 
@@ -108,7 +112,7 @@ use_ruby() {
   if [ -d $rubydir ]; then
     echo "Activating Ruby $version"
     sudo rm $root/active && sudo ln -s $root/$version $root/active
-    ruby -v
+    renv use base
   else
     echo "Specify a Ruby version: 186, 187, 191"
   fi
@@ -198,6 +202,12 @@ git-prompt () {
 }
 
 # taken from http://github.com/bryanl/zshkit/
+git-track () {
+    local BRANCH=`git branch 2> /dev/null | grep \* | sed 's/* //'`
+	git config branch.$BRANCH.remote origin
+	git config branch.$BRANCH.merge refs/heads/$BRANCH
+	echo "tracking origin/$BRANCH"
+}
 github-url () { git config remote.origin.url | sed -En 's/git(@|:\/\/)github.com(:|\/)(.+)\/(.+).git/https:\/\/github.com\/\3\/\4/p'; }
 github-go () { open $(github-url); }
 git-scoreboard () { git log | grep '^Author' | sort | uniq -ci | sort -r; }
