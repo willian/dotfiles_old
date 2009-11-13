@@ -1,7 +1,7 @@
 export PATH="/usr/local/ruby/active/bin:$PATH"
 export PATH="/usr/local/git/bin:/usr/local/bin:/usr/local/sbin:/usr/local/mysql/bin:$PATH"
 export PATH="/usr/local/erlang/bin:/usr/local/couchdb/bin:/usr/local/spidermonkey/bin:/usr/local/erlang/lib/erlang/lib/rabbitmq_server-1.6.0/sbin:$PATH"
-export PATH="/usr/local/prince/bin:$PATH"
+export PATH="/usr/local/prince/bin:/usr/local/redis/bin:$PATH"
 export EVENT_NOKQUEUE=1
 export MANPATH=/usr/local/git/man:$MANPATH
 export EDITOR="/usr/bin/mate -wl1"
@@ -50,7 +50,7 @@ alias top="top -o cpu"
 alias irb="irb --readline --prompt-mode simple"
 alias mysql="mysql --auto-rehash=TRUE"
 alias ni="lsof -i -Pn"
-alias search="find vendor/plugins -follow -name '*' | xargs grep "
+alias railsapp="rails -m http://gist.github.com/221073.txt"
 
 shopt -s cdspell
 shopt -s nocaseglob
@@ -66,18 +66,26 @@ mamp() {
     ln /tmp/mysql.sock /Applications/MAMP/tmp/mysql/mysql.sock
 }
 
+f() {
+    local path="$1"
+    shift
+    echo $path
+    echo $#
+    find "$path" -follow -name '*' | xargs grep "$*"
+}
+
 # reload source
 reload() { source ~/.bash_profile; }
 
 # list directory after cd; also save the last directory
 # and open it when a new tab is created
-cd() { 
+cd() {
     builtin cd "${@:-$HOME}" && ls && pwd > $CDHISTORY;
 }
 
-dir=$(cat $CDHISTORY)
-
 if [ -f $CDHISTORY ]; then
+    dir=$(cat $CDHISTORY)
+
     if [ -d "$dir" ]; then
         builtin cd "$dir" && clear
     fi
@@ -98,7 +106,7 @@ fi
 use_ruby() {
   local root="/usr/local/ruby"
   local version="invalid"
-  
+
   if [ "$1" = "191" ]; then
     version="1.9.1-p243"
   elif [ "$1" = "187" ]; then
@@ -106,9 +114,9 @@ use_ruby() {
   elif [ "$1" = "186" ]; then
     version="1.8.6-p383"
   fi
-  
+
   local rubydir="$root/$version"
-  
+
   if [ -d $rubydir ]; then
     echo "Activating Ruby $version"
     sudo rm $root/active && sudo ln -s $root/$version $root/active
@@ -124,8 +132,8 @@ mkdir() { /bin/mkdir $@ && eval cd "\$$#"; }
 # get the tinyurl
 tinyurl () {
     local tmp=/tmp/tinyurl
-    rm $tmp 2>1 /dev/null
-    wget "http://tinyurl.com/api-create.php?url=${1}" -O $tmp 2>1 /dev/null
+    rm $tmp > /dev/null 2>&1
+    wget "http://tinyurl.com/api-create.php?url=${1}" -O $tmp > /dev/null 2>&1
     cat $tmp | pbcopy
 }
 
@@ -141,7 +149,7 @@ _renvcomplete() {
 complete -o default -o nospace -F _renvcomplete renv
 
 # github repository cloning
-# usage: 
+# usage:
 #    github has_permalink       ~> will clone $USER repositories
 #    github username repository ~> will clone someone else's
 github() {
@@ -169,7 +177,7 @@ git-prompt () {
     local DIVERGED="have diverged"
     local CHANGED="# Changed but not updated"
     local TO_BE_COMMITED="# Changes to be committed"
-    
+
     if [ "$BRANCH" != "" ]; then
         if [[ "$STATUS" =~ "$DIVERGED" ]]; then
             PROMPT_COLOR=$RED
@@ -190,11 +198,11 @@ git-prompt () {
             PROMPT_COLOR=$GREEN
             STATE=""
         fi
-        
+
         if [[ "$STATUS" =~ "$UNTRACKED" ]]; then
             STATE="${STATE}${YELLOW}*${NO_COLOR}"
         fi
-        
+
         PS1="\n[\u] ${YELLOW}\w\a${NO_COLOR} (${PROMPT_COLOR}${BRANCH}${NO_COLOR}${STATE})\n$ "
     else
         PS1="\n[\u] ${YELLOW}\w\a${NO_COLOR}\n\$ "
