@@ -1,0 +1,159 @@
+# 
+#  .autotest
+#  Autotest Growl Notifications for Rspec and Test::Unit
+#  
+#  Created by Rein Henrichs on 2007-09-12.
+#  Copyright 2007 Rein Henrichs.
+#  http://pastie.caboo.se/96573/download
+# 
+
+module Autotest::Growl
+  Autotest.add_hook :ran_command do |at|
+    input = Input.new( at.results )
+    Growler.display_notification( input )
+  end
+end  
+
+class String
+  def remove_color_codes!
+    self.gsub!(/\e\[\d+m/,'')
+    self.strip!
+  end
+end
+
+
+class Growler
+  class << self
+    def display_notification( input )
+      growler = RspecGrowler if input.from_rspec?
+      growler = TestUnitGrowler if input.from_test_unit?
+      growler = StoryRunnerGrowler if input.from_story_runner?
+      growler.display_notification( input.result_line )
+    end
+
+    def notify(title, msg, img, pri=0, stick="" )
+      # system "growlnotify -n autotest --image #{img} -p '#{pri}' -w  #{stick} -m #{msg.inspect} #{title}" 
+      system "growlnotify -n autotest --image #{img} -p '#{pri}' -w -m #{msg.inspect} #{title}" 
+    end
+
+    def notify_system_error( title = "System Error", err = "")
+      Growler.notify( title, err, '~/Library/autotest/fail.png')
+    end
+  end
+end
+
+class Input
+  def initialize(input)
+    @input = input
+  end
+
+  def empty?; @input.empty?; end
+  
+  # TODO: Make these work
+  def failing?; end
+  def passing?; end
+  def error?; end
+  
+  def from_rspec?; !!rspec_result_line || empty?; end
+  def from_test_unit?; !!test_unit_result_line; end
+  def from_story_runner?; !!story_runner_result_line; end
+  def rspec_result_line; @input.grep( /\d+\sexample/ ).first; end
+  def test_unit_result_line; @input.grep( /\d+\sassertion/ ).first; end
+  def story_runner_result_line; @input.grep( /\d+\sscenarios/ ).first; end
+  def result_line
+    @line ||= case
+      when from_rspec? then rspec_result_line
+      when from_test_unit? then test_unit_result_line
+      when from_story_runner? then story_runner_result_line
+      else nil
+      end
+    @line.remove_color_codes! if @line
+  end
+end
+
+class AutoGrowler < Growler 
+  class << self
+    def notify_failure(input)
+      notify( "Tests Failed", input, '~/Library/autotest/fail.png', 2, "-s" )
+    end
+    def notify_success(input)
+      notify( "Tests Passed", input, '~/Library/autotest/pass.png', -1 )
+    end    
+  end
+end
+
+class RspecGrowler < AutoGrowler
+  class << self    
+    def notify_pending(input)
+      notify( "Tests Pending", input, '~/Library/autotest/pending.png', 1 )
+    end
+
+    def notify_error
+      notify( "Syntax Error", "It looks like there was a syntax error. Check your autotest results.", '~/Library/autotest/fail.png', 2)
+    end
+
+    def display_notification(input)
+
+      notify_error and return unless input      
+      # TODO: replace with some object oriented goodness. elsif FTL!
+      examples, failures, pending = input.split(", ")
+      if failures.to_i > 0
+        notify_failure input
+      elsif pending.to_i > 0
+        notify_pending input
+      else
+        notify_success input
+      end
+    end
+  end
+end
+
+class StoryRunnerGrowler < AutoGrowler
+  class << self    
+    def notify_failure(input)
+      notify( "Scenarios Failed", input, '~/Library/autotest/fail.png', 2, "-s" )
+    end
+
+    def notify_success(input)
+      notify( "Scenarios Passed", input, '~/Library/autotest/pass.png', -1 )
+    end    
+
+    def notify_pending(input)
+      notify( "Scenarios Pending", input, '~/Library/autotest/pending.png', 1, "-s" )
+    end
+
+    def display_notification(input)
+
+      notify_error and return unless input      
+      # TODO: replace with some object oriented goodness. elsif FTL!
+      examples, failures, pending = input.split(", ")
+      if failures.to_i > 0
+        notify_failure input
+      elsif pending.to_i > 0
+        notify_pending input
+      else
+        notify_success input
+      end
+    end
+  end
+end
+
+class TestUnitGrowler < AutoGrowler
+  class << self
+    def notify_error(input)
+      notify( "Tests Errored", input, '~/Library/autotest/fail.png', 2, "-s" )
+    end
+    def display_notification( input )
+
+      # TODO: replace with some object oriented goodness. elsif FTL!
+      tests, assertions, failures, errors = input.split(", ")
+      if errors.to_i > 0
+        notify_error input
+      elsif failures.to_i > 0
+        notify_failure input
+      else
+        notify_success input
+      end
+    end
+  end
+end
