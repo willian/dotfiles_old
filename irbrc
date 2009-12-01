@@ -14,7 +14,7 @@ if defined?(IRB)
   IRB.conf[:PROMPT_MODE]  = :SIMPLE
   IRB.conf[:AUTO_INDENT]  = true
   IRB.conf[:EVAL_HISTORY] = 100
-  IRB.conf[:USE_READLINE] = false
+  IRB.conf[:USE_READLINE] = true
 end
 
 # try to load rubygems

@@ -1,3 +1,7 @@
 Host willian
   HostName willianfernandes.com.br
 
+Host brasil
+  User brasil-adm
+  HostName guest-brasil.netguestdns.com.br
+
