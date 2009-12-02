@@ -5,3 +5,7 @@ Host brasil
   User brasil-adm
   HostName guest-brasil.netguestdns.com.br
 
+Host billboard
+  User uolhost
+  HostName billboard-web01.dominiotemporarioidc.com
+
