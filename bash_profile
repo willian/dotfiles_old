@@ -75,41 +75,6 @@ if [ -f $CDHISTORY ]; then
     fi
 fi
 
-# Specify which ruby version to use
-# Here's how my ruby is installed:
-#
-#   /usr/local/ruby/1.9.1-p243
-#   /usr/local/ruby/1.8.7-p174
-#   /usr/local/ruby/1.8.6-p383
-#   /usr/local/ruby/active
-#
-# The active directory is a symlink to the active
-# ruby version. This is also on the $PATH.
-#
-#   export PATH="/usr/local/ruby/active/ruby:$PATH"
-use_ruby() {
-  local root="/usr/local/ruby"
-  local version="invalid"
-
-  if [ "$1" = "191" ]; then
-    version="1.9.1-p243"
-  elif [ "$1" = "187" ]; then
-    version="1.8.7-p174"
-  elif [ "$1" = "186" ]; then
-    version="1.8.6-p383"
-  fi
-
-  local rubydir="$root/$version"
-
-  if [ -d $rubydir ]; then
-    echo "Activating Ruby $version"
-    sudo rm $root/active && sudo ln -s $root/$version $root/active
-    renv use base
-  else
-    echo "Specify a Ruby version: 186, 187, 191"
-  fi
-}
-
 # enter a recently created directory
 mkdir() { /bin/mkdir $@ && eval cd "\$$#"; }
 
