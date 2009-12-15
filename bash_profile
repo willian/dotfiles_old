@@ -1,7 +1,9 @@
 export PATH="/usr/local/ruby/active/bin:$PATH"
 export PATH="/usr/local/git/bin:/usr/local/bin:/usr/local/sbin:/usr/local/mysql/bin:$PATH"
 export PATH="/usr/local/erlang/bin:/usr/local/couchdb/bin:/usr/local/spidermonkey/bin:/usr/local/erlang/lib/erlang/lib/rabbitmq_server-1.6.0/sbin:$PATH"
-export PATH="/usr/local/prince/bin:/usr/local/redis/bin:$PATH"
+export PATH="/usr/local/prince/bin:/usr/local/redis/bin:/usr/local/rhino:$PATH"
+export PATH="/usr/local/scala/bin/:$PATH"
+export CLASSPATH="/usr/local/rhino:$CLASSPATH"
 export EVENT_NOKQUEUE=1
 export MANPATH=/usr/local/git/man:$MANPATH
 export EDITOR="/usr/bin/mate -wl1"
@@ -37,6 +39,7 @@ YELLOW="\[\033[0;33m\]"
 source ~/.git_completion.sh
 source ~/.bash_completion.sh
 
+alias js="java jline.ConsoleRunner org.mozilla.javascript.tools.shell.Main"
 alias ls="ls -G"
 alias ll="ls -Glahs"
 alias colors="sh ~/.colors.sh"
@@ -95,8 +98,10 @@ fi
 # Here's how my ruby is installed:
 #
 #   /usr/local/ruby/1.9.1-p243
+#   /usr/local/ruby/1.9.1-p376
 #   /usr/local/ruby/1.8.7-p174
 #   /usr/local/ruby/1.8.6-p383
+#   /usr/local/ruby/REE
 #   /usr/local/ruby/active
 #
 # The active directory is a symlink to the active
@@ -108,11 +113,14 @@ use_ruby() {
   local version="invalid"
 
   if [ "$1" = "191" ]; then
-    version="1.9.1-p243"
+    # version="1.9.1-p243"
+    version="1.9.1-p376"
   elif [ "$1" = "187" ]; then
     version="1.8.7-p174"
   elif [ "$1" = "186" ]; then
-    version="1.8.6-p383"
+      version="1.8.6-p383"
+  elif [ "$1" = "ree" ]; then
+      version="REE"
   fi
 
   local rubydir="$root/$version"
@@ -122,7 +130,7 @@ use_ruby() {
     sudo rm $root/active && sudo ln -s $root/$version $root/active
     renv use base
   else
-    echo "Specify a Ruby version: 186, 187, 191"
+    echo "Specify a Ruby version: 186, 187, 191, ree"
   fi
 }
 
