@@ -63,12 +63,7 @@ shopt -s extglob
 set -o ignoreeof
 unset MAILCHECK
 
-# start apache from mamp
-mamp() {
-    /Applications/MAMP/Library/bin/apachectl start
-    ln /tmp/mysql.sock /Applications/MAMP/tmp/mysql/mysql.sock
-}
-
+# Usage: f /some/path [grep options]
 f() {
     local path="$1"
     shift
