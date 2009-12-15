@@ -67,8 +67,6 @@ unset MAILCHECK
 f() {
     local path="$1"
     shift
-    echo $path
-    echo $#
     find "$path" -follow -name '*' | xargs grep "$*"
 }
 
