@@ -1,0 +1,18 @@
+# this makes the "delete" key work rather than
+# just entering a ~
+"\e[3~": delete-char
+
+# these allow you to start typing a command and
+# use the up/down arrow to auto complete from
+# commands in your history
+"\e[B": history-search-forward
+"\e[A": history-search-backward
+
+# this lets you hit tab to auto-complete a file or
+# directory name ignoring case
+set completion-ignore-case On
+
+set meta-flag on
+set input-meta on
+set output-meta on
+set convert-meta off
