@@ -50,12 +50,11 @@ shopt -s extglob
 set -o ignoreeof
 unset MAILCHECK
 
+# Usage: f /some/path [grep options]
 f() {
-    local path="$1"
-    shift
-    echo $path
-    echo $#
-    find "$path" -follow -name '*' | xargs grep "$*"
+  local path="$1"
+  shift
+  find "$path" -follow -name '*' | xargs grep "$*"
 }
 
 # reload source
@@ -64,26 +63,61 @@ reload() { source ~/.bash_profile; }
 # list directory after cd; also save the last directory
 # and open it when a new tab is created
 cd() {
-    builtin cd "${@:-$HOME}" && ls && pwd > $CDHISTORY;
+  builtin cd "${@:-$HOME}" && ls && pwd > $CDHISTORY;
 }
 
 if [ -f $CDHISTORY ]; then
-    dir=$(cat $CDHISTORY)
+  dir=$(cat $CDHISTORY)
 
-    if [ -d "$dir" ]; then
-        builtin cd "$dir" && clear
-    fi
+  if [ -d "$dir" ]; then
+    builtin cd "$dir" && clear
+  fi
 fi
+
+# Specify which ruby version to use
+# Here's how my ruby is installed:
+#
+#   /usr/local/ruby/1.9.1-p376
+#   /usr/local/ruby/1.8.7-p174
+#   /usr/local/ruby/1.8.6-p383
+#   /usr/local/ruby/active
+#
+# The active directory is a symlink to the active
+# ruby version. This is also on the $PATH.
+#
+#   export PATH="/usr/local/ruby/active/ruby:$PATH"
+use_ruby() {
+  local root="/usr/local/ruby"
+  local version="invalid"
+
+  if [ "$1" = "191" ]; then
+    version="1.9.1-p376"
+  elif [ "$1" = "187" ]; then
+    version="1.8.7-p174"
+  elif [ "$1" = "186" ]; then
+    version="1.8.6-p383"
+  fi
+
+  local rubydir="$root/$version"
+
+  if [ -d $rubydir ]; then
+    echo "Activating Ruby $version"
+    sudo rm $root/active && sudo ln -s $root/$version $root/active
+    renv use base
+  else
+    echo "Specify a Ruby version: 186, 187, 191"
+  fi
+}
 
 # enter a recently created directory
 mkdir() { /bin/mkdir $@ && eval cd "\$$#"; }
 
 # get the tinyurl
 tinyurl () {
-    local tmp=/tmp/tinyurl
-    rm $tmp > /dev/null 2>&1
-    wget "http://tinyurl.com/api-create.php?url=${1}" -O $tmp > /dev/null 2>&1
-    cat $tmp | pbcopy
+  local tmp=/tmp/tinyurl
+  rm $tmp > /dev/null 2>&1
+  wget "http://tinyurl.com/api-create.php?url=${1}" -O $tmp > /dev/null 2>&1
+  cat $tmp | pbcopy
 }
 
 # complete rake tasks
@@ -102,68 +136,68 @@ complete -o default -o nospace -F _renvcomplete renv
 #    github has_permalink       ~> will clone $USER repositories
 #    github username repository ~> will clone someone else's
 github() {
-    if [ $# = 1 ]; then
-        git clone git@github.com:$USER/$1.git;
-        builtin cd $1 && ls;
-    elif [ $# = 2 ]; then
-        git clone git://github.com/$1/$2.git;
-        builtin cd $2 && ls;
-    else
-        echo "Usage:";
-        echo "    github <repo>        ~> will clone $USER's <repo>";
-        echo "    github <user> <repo> ~> will clone <user>'s <repo>";
-    fi
+  if [ $# = 1 ]; then
+    git clone git@github.com:$USER/$1.git;
+    builtin cd $1 && ls;
+  elif [ $# = 2 ]; then
+    git clone git://github.com/$1/$2.git;
+    builtin cd $2 && ls;
+  else
+    echo "Usage:";
+    echo "    github <repo>        ~> will clone $USER's <repo>";
+    echo "    github <user> <repo> ~> will clone <user>'s <repo>";
+  fi
 }
 
 git-prompt () {
-    local BRANCH=`git branch 2> /dev/null | grep \* | sed 's/* //'`
-    local STATUS=`git status 2>/dev/null`
-    local PROMPT_COLOR=$GREEN
-    local STATE=" "
-    local BEHIND="# Your branch is behind"
-    local AHEAD="# Your branch is ahead"
-    local UNTRACKED="# Untracked files"
-    local DIVERGED="have diverged"
-    local CHANGED="# Changed but not updated"
-    local TO_BE_COMMITED="# Changes to be committed"
+  local BRANCH=`git branch 2> /dev/null | grep \* | sed 's/* //'`
+  local STATUS=`git status 2>/dev/null`
+  local PROMPT_COLOR=$GREEN
+  local STATE=" "
+  local BEHIND="# Your branch is behind"
+  local AHEAD="# Your branch is ahead"
+  local UNTRACKED="# Untracked files"
+  local DIVERGED="have diverged"
+  local CHANGED="# Changed but not updated"
+  local TO_BE_COMMITED="# Changes to be committed"
 
-    if [ "$BRANCH" != "" ]; then
-        if [[ "$STATUS" =~ "$DIVERGED" ]]; then
-            PROMPT_COLOR=$RED
-            STATE="${STATE}${RED}↕${NO_COLOR}"
-        elif [[ "$STATUS" =~ "$BEHIND" ]]; then
-            PROMPT_COLOR=$RED
-            STATE="${STATE}${RED}↓${NO_COLOR}"
-        elif [[ "$STATUS" =~ "$AHEAD" ]]; then
-            PROMPT_COLOR=$RED
-            STATE="${STATE}${RED}↑${NO_COLOR}"
-        elif [[ "$STATUS" =~ "$CHANGED" ]]; then
-            PROMPT_COLOR=$RED
-            STATE=""
-        elif [[ "$STATUS" =~ "$TO_BE_COMMITED" ]]; then
-            PROMPT_COLOR=$RED
-            STATE=""
-        else
-            PROMPT_COLOR=$GREEN
-            STATE=""
-        fi
-
-        if [[ "$STATUS" =~ "$UNTRACKED" ]]; then
-            STATE="${STATE}${YELLOW}*${NO_COLOR}"
-        fi
-
-        PS1="\n[\u] ${YELLOW}\w\a${NO_COLOR} (${PROMPT_COLOR}${BRANCH}${NO_COLOR}${STATE})\n$ "
+  if [ "$BRANCH" != "" ]; then
+    if [[ "$STATUS" =~ "$DIVERGED" ]]; then
+      PROMPT_COLOR=$RED
+      STATE="${STATE}${RED}↕${NO_COLOR}"
+    elif [[ "$STATUS" =~ "$BEHIND" ]]; then
+      PROMPT_COLOR=$RED
+      STATE="${STATE}${RED}↓${NO_COLOR}"
+    elif [[ "$STATUS" =~ "$AHEAD" ]]; then
+      PROMPT_COLOR=$RED
+      STATE="${STATE}${RED}↑${NO_COLOR}"
+    elif [[ "$STATUS" =~ "$CHANGED" ]]; then
+      PROMPT_COLOR=$RED
+      STATE=""
+    elif [[ "$STATUS" =~ "$TO_BE_COMMITED" ]]; then
+      PROMPT_COLOR=$RED
+      STATE=""
     else
-        PS1="\n[\u] ${YELLOW}\w\a${NO_COLOR}\n\$ "
+      PROMPT_COLOR=$GREEN
+      STATE=""
     fi
+
+    if [[ "$STATUS" =~ "$UNTRACKED" ]]; then
+      STATE="${STATE}${YELLOW}*${NO_COLOR}"
+    fi
+
+    PS1="\n[\u] ${YELLOW}\w\a${NO_COLOR} (${PROMPT_COLOR}${BRANCH}${NO_COLOR}${STATE})\n$ "
+  else
+    PS1="\n[\u] ${YELLOW}\w\a${NO_COLOR}\n\$ "
+  fi
 }
 
 # taken from http://github.com/bryanl/zshkit/
 git-track () {
-    local BRANCH=`git branch 2> /dev/null | grep \* | sed 's/* //'`
-	git config branch.$BRANCH.remote origin
-	git config branch.$BRANCH.merge refs/heads/$BRANCH
-	echo "tracking origin/$BRANCH"
+  local BRANCH=`git branch 2> /dev/null | grep \* | sed 's/* //'`
+  git config branch.$BRANCH.remote origin
+  git config branch.$BRANCH.merge refs/heads/$BRANCH
+  echo "tracking origin/$BRANCH"
 }
 github-url () { git config remote.origin.url | sed -En 's/git(@|:\/\/)github.com(:|\/)(.+)\/(.+).git/https:\/\/github.com\/\3\/\4/p'; }
 github-go () { open $(github-url); }
