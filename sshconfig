@@ -4,6 +4,7 @@ Host willian
 Host brasil
   User brasil-adm
   HostName guest-brasil.netguestdns.com.br
+  Port 2222
 
 Host billboard
   User uolhost
