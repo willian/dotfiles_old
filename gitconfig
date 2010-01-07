@@ -9,7 +9,7 @@
 	ui = true
 [core]
 	excludesfile = /Users/willian/.gitignore
-	editor = vim
+	editor = mate -wl1
 [alias]
 	sh = !git-sh
 	ci = commit
