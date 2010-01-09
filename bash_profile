@@ -41,7 +41,7 @@ alias top="top -o cpu"
 alias irb="irb --readline --prompt-mode simple"
 alias mysql="mysql --auto-rehash=TRUE"
 alias ni="lsof -i -Pn"
-alias railsapp="rails -m http://gist.github.com/221073.txt"
+alias railsapp="rails -m http://gist.github.com/263273.txt"
 
 _rmate() {
   mate $(ls -1 | egrep -v "(log|git|public|vendor|tmp|doc)" | egrep -v .DS_Store)
@@ -95,7 +95,7 @@ fi
 # use_ruby() {
 #   local root="/usr/local/ruby"
 #   local version="invalid"
-# 
+#
 #   if [ "$1" = "191" ]; then
 #     version="1.9.1-p376"
 #   elif [ "$1" = "187" ]; then
@@ -103,9 +103,9 @@ fi
 #   elif [ "$1" = "186" ]; then
 #     version="1.8.6-p383"
 #   fi
-# 
+#
 #   local rubydir="$root/$version"
-# 
+#
 #   if [ -d $rubydir ]; then
 #     echo "Activating Ruby $version"
 #     sudo rm $root/active && sudo ln -s $root/$version $root/active
@@ -134,7 +134,7 @@ complete -C ~/.rake_completion.rb -o default rake
 #   COMPREPLY=($(compgen -W "`NAME=${COMP_WORDS[COMP_CWORD]} renv complete`"))
 #   return 0
 # }
-# 
+#
 # complete -o default -o nospace -F _renvcomplete renv
 
 # github repository cloning
