@@ -43,6 +43,7 @@ alias irb="irb --readline --prompt-mode simple"
 alias mysql="mysql --auto-rehash=TRUE"
 alias ni="lsof -i -Pn"
 alias railsapp="rails -m http://gist.github.com/263273.txt"
+alias spec_rcov="rake spec:rcov && open coverage/index.html"
 
 _rmate() {
   mate $(ls -1 | egrep -v "(log|git|vendor|tmp|doc)" | egrep -v .DS_Store)
