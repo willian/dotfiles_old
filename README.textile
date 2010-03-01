@@ -9,3 +9,8 @@ chmod +x install.sh
 </code>
 </pre>
 
+h1. Configuring the Terminal in Mac OS X
+
+Some tips created by "Nando Vieira":http://github.com/fnando:
+"http://simplesideias.com.br/configurando-o-terminal-no-mac-os-x/":http://simplesideias.com.br/configurando-o-terminal-no-mac-os-x/
+
