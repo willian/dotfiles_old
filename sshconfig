@@ -6,7 +6,7 @@ Host brasil
   HostName guest-brasil.netguestdns.com.br
   Port 2222
 
-Host billboard
-  User uolhost
-  HostName billboard-web01.dominiotemporarioidc.com
+Host trident
+  User ikwa
+  HostName ikwa.com.br
 

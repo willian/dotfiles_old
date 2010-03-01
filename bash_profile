@@ -1,6 +1,7 @@
 export PATH="/usr/local/ruby/active/bin:$PATH"
 export PATH="/usr/local/git/bin:/usr/local/bin:/usr/local/sbin:/usr/local/mysql/bin:$PATH"
 export PATH="/Users/willian/.gem/ruby/1.8/bin:$PATH"
+export PATH="/Users/willian/.rvm/gems/ruby-1.9.1-p378/bin:$PATH"
 export PATH="/usr/local/mongodb/bin:$PATH"
 export EVENT_NOKQUEUE=1
 export MANPATH=/usr/local/git/man:$MANPATH
@@ -226,3 +227,4 @@ PROMPT_COMMAND=git-prompt
 # export PATH="$RENVDIR/active/bin:$PATH"
 # export GEM_PATH="$RENVDIR/active/lib"
 
+if [[ -s /Users/willian/.rvm/scripts/rvm ]] ; then source /Users/willian/.rvm/scripts/rvm ; fi
