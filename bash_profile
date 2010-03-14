@@ -2,7 +2,8 @@ export PATH="/usr/local/ruby/active/bin:$PATH"
 export PATH="/usr/local/git/bin:/usr/local/bin:/usr/local/sbin:/usr/local/mysql/bin:$PATH"
 export PATH="/usr/local/erlang/bin:/usr/local/couchdb/bin:/usr/local/spidermonkey/bin:/usr/local/erlang/lib/erlang/lib/rabbitmq_server-1.6.0/sbin:$PATH"
 export PATH="/usr/local/prince/bin:/usr/local/redis/bin:/usr/local/rhino:$PATH"
-export PATH="/usr/local/scala/bin/:$PATH"
+export PATH="/usr/local/scala/bin/:/usr/local/php/pear/bin:/usr/local/activemq/bin:$PATH"
+export PATH="/usr/local/sphinx/bin:/usr/local/homebrew/bin:$PATH"
 export CLASSPATH="/usr/local/rhino:$CLASSPATH"
 export EVENT_NOKQUEUE=1
 export MANPATH=/usr/local/git/man:$MANPATH
@@ -53,7 +54,7 @@ alias top="top -o cpu"
 alias irb="irb --readline --prompt-mode simple"
 alias mysql="mysql --auto-rehash=TRUE"
 alias ni="lsof -i -Pn"
-alias railsapp="rails -m http://gist.github.com/221073.txt"
+alias make="make -j 2"
 
 shopt -s cdspell
 shopt -s nocaseglob
@@ -68,6 +69,15 @@ f() {
     local path="$1"
     shift
     find "$path" -follow -name '*' | xargs grep "$*"
+}
+
+# Create a new Rails app using my own template
+railsapp() {
+    clear
+    cd ~/Sites
+    renv use "$1"
+    renv install rails
+    rails -m http://gist.github.com/221073.txt "$1"
 }
 
 # reload source
@@ -105,7 +115,9 @@ use_ruby() {
   local root="/usr/local/ruby"
   local version="invalid"
 
-  if [ "$1" = "191" ]; then
+  if [ "$1" = "192" ]; then
+      version="1.9.2-preview1"
+  elif [ "$1" = "191" ]; then
     # version="1.9.1-p243"
     version="1.9.1-p376"
   elif [ "$1" = "187" ]; then
@@ -123,8 +135,13 @@ use_ruby() {
     sudo rm $root/active && sudo ln -s $root/$version $root/active
     renv use base
   else
-    echo "Specify a Ruby version: 186, 187, 191, ree"
+    echo "Specify a Ruby version: 186, 187, 191, 192, ree"
   fi
+}
+
+gzipped() {
+    curl --write-out "Regular request: %{size_download}\n" --output /dev/null --silent $1
+    curl -H "Accept-Encoding: gzip,deflate" --write-out "Gzipped request: %{size_download}\n" --output /dev/null --silent $1
 }
 
 # enter a recently created directory
@@ -235,3 +252,4 @@ PROMPT_COMMAND=git-prompt
 export RENVDIR="$HOME/.renv"
 export PATH="$RENVDIR/active/bin:$PATH"
 export GEM_PATH="$RENVDIR/active/lib"
+
