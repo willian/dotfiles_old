@@ -25,13 +25,13 @@ unless defined?(RUBY_ENGINE) && RUBY_ENGINE == "macruby"
     IRB.conf[:EVAL_HISTORY] = 1000
     IRB.conf[:USE_READLINE] = true
 
-    version = "\033[1;30m#{RUBY_VERSION}\033[0m"
+    prompt = "\033[1;30m#{RUBY_VERSION}\033[0m"
 
     IRB.conf[:PROMPT][:CUSTOM] = {
-      :PROMPT_C => "#{version} \033[0;33m?>\033[0m ",
+      :PROMPT_C => "#{prompt} \033[0;33m?>\033[0m ",
       :RETURN   => "=> %s\n",
-      :PROMPT_I => "#{version} \033[0;33m>>\033[0m ",
-      :PROMPT_N => "#{version} \033[0;33m>>\033[0m ",
+      :PROMPT_I => "#{prompt} \033[0;33m>>\033[0m ",
+      :PROMPT_N => "#{prompt} \033[0;33m>>\033[0m ",
       :PROMPT_S => nil
     }
     IRB.conf[:PROMPT_MODE] = :CUSTOM
@@ -59,14 +59,14 @@ unless defined?(RUBY_ENGINE) && RUBY_ENGINE == "macruby"
     # Set short environment name for prompt
     envs = { "development" => "dev", "production" => "prod" }
     env = envs[rails_env] || rails_env
-    env = "\033[1;30m#{env.upcase}\033[0m"
+    prompt = "\033[1;30m#{RUBY_VERSION} #{env.upcase}\033[0m"
 
     IRB.conf[:PROMPT] ||= {}
     IRB.conf[:PROMPT][:RAILS] = {
-      :PROMPT_C => "#{env} \033[0;33m?>\033[0m ",
+      :PROMPT_C => "#{prompt} \033[0;33m?>\033[0m ",
       :RETURN   => "=> %s\n",
-      :PROMPT_I => "#{env} \033[0;33m>>\033[0m ",
-      :PROMPT_N => "#{env} \033[0;33m>>\033[0m ",
+      :PROMPT_I => "#{prompt} \033[0;33m>>\033[0m ",
+      :PROMPT_N => "#{prompt} \033[0;33m>>\033[0m ",
       :PROMPT_S => nil
     }
     IRB.conf[:PROMPT_MODE] = :RAILS
