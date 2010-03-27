@@ -55,6 +55,7 @@ alias irb="irb --readline --prompt-mode simple"
 alias mysql="mysql --auto-rehash=TRUE"
 alias ni="lsof -i -Pn"
 alias make="make -j 2"
+alias cleanup="sudo rm -rf /private/var/log/asl/*"
 
 shopt -s cdspell
 shopt -s nocaseglob
