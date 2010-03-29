@@ -43,7 +43,6 @@ source ~/.bash_completion.sh
 alias js="java jline.ConsoleRunner org.mozilla.javascript.tools.shell.Main"
 alias ls="ls -G"
 alias ll="ls -Glahs"
-alias colors="sh ~/.colors.sh"
 alias psgrep="ps aux | egrep -v egrep | egrep"
 alias showip="ifconfig | grep broadcast | sed 's/.*inet \(.*\) netmask.*/\1/'"
 alias myip="curl http://www.whatismyip.com/automation/n09230945.asp"
@@ -51,17 +50,22 @@ alias lock="/System/Library/CoreServices/Menu\ Extras/user.menu/Contents/Resourc
 alias quicksilver="open /Applications/Quicksilver.app"
 alias qs="quicksilver"
 alias top="top -o cpu"
-alias irb="irb --readline --prompt-mode simple"
 alias mysql="mysql --auto-rehash=TRUE"
 alias ni="lsof -i -Pn"
 alias make="make -j 2"
 alias cleanup="sudo rm -rf /private/var/log/asl/*"
+alias xmlget="curl -X GET -H 'Accept: application/xml'"
+alias jsonget="curl -X GET -H 'Accept: application/json'"
+alias xmlpost="curl -X POST -H 'Accept: application/xml'"
+alias xmlput="curl -X PUT -H 'Accept: application/xml'"
+alias xmldelete="curl -X DELETE -H 'Accept: application/xml'"
 
 shopt -s cdspell
 shopt -s nocaseglob
 shopt -s checkwinsize
 shopt -s dotglob
 shopt -s extglob
+shopt -s progcomp
 set -o ignoreeof
 unset MAILCHECK
 
@@ -141,8 +145,21 @@ use_ruby() {
 }
 
 gzipped() {
-    curl --write-out "Regular request: %{size_download}\n" --output /dev/null --silent $1
-    curl -H "Accept-Encoding: gzip,deflate" --write-out "Gzipped request: %{size_download}\n" --output /dev/null --silent $1
+    local r=`curl --write-out "%{size_download}" --output /dev/null --silent $1`
+    local g=`curl -H "Accept-Encoding: gzip,deflate" --write-out "%{size_download}" --output /dev/null --silent $1`
+    local message
+
+    local rs=`expr ${r} / 1024`
+    local gs=`expr ${g} / 1024`
+
+    if [[ "$r" =  "$g" ]]; then
+        message="Regular: ${rs}KB\n\033[31m → Gzip: ${gs}KB\033[0m"
+    else
+        message="Regular: ${rs}KB\n\033[32m → Gzip: ${gs}KB\033[0m"
+    fi
+
+    echo -e $message
+    return 0
 }
 
 # enter a recently created directory
@@ -156,16 +173,32 @@ tinyurl () {
     cat $tmp | pbcopy
 }
 
-# complete rake tasks
-complete -C ~/.rake_completion.rb -o default rake
-
-# complete renv envs
-_renvcomplete() {
-  COMPREPLY=($(compgen -W "`NAME=${COMP_WORDS[COMP_CWORD]} renv complete`"))
-  return 0
+# retrieve all rake tasks
+_rakecomplete() {
+    COMP_WORDBREAKS=${COMP_WORDBREAKS/\:/}
+    local words=`rake -T | grep rake | sed 's/rake \([^ ]*\).*/\1/'`
+    local curw=${COMP_WORDS[COMP_CWORD]}
+    COMPREPLY=($(compgen -W "$words" -- $curw))
+    return 0
 }
 
-complete -o default -o nospace -F _renvcomplete renv
+# retrieve renv environments
+_renvcomplete() {
+    COMPREPLY=($(compgen -W "`NAME=${COMP_WORDS[COMP_CWORD]} renv complete`"))
+    return 0
+}
+
+# retrive list of all cheat sheets
+_cheatcomplete() {
+    local words=`cheat all | sed 's/ *//' | grep -v "All Cheat"`
+    local curw=${COMP_WORDS[COMP_CWORD]}
+    COMPREPLY=($(compgen -W "$words" -- $curw))
+    return 0
+}
+
+complete -o default -F _renvcomplete renv
+complete -o default -F _cheatcomplete cheat
+complete -o default -F _rakecomplete rake
 
 # github repository cloning
 # usage:
@@ -187,18 +220,28 @@ github() {
 
 git-prompt () {
     local BRANCH=`git branch 2> /dev/null | grep \* | sed 's/* //'`
+
+    if [[ "$BRANCH" = "" ]]; then
+        BRANCH=`git status 2> /dev/null | grep "On branch" | sed 's/# On branch //'`
+    fi
+
     local STATUS=`git status 2>/dev/null`
     local PROMPT_COLOR=$GREEN
     local STATE=" "
+    local NOTHING_TO_COMMIT="# Initial commit"
     local BEHIND="# Your branch is behind"
     local AHEAD="# Your branch is ahead"
     local UNTRACKED="# Untracked files"
     local DIVERGED="have diverged"
     local CHANGED="# Changed but not updated"
     local TO_BE_COMMITED="# Changes to be committed"
+    local LOG=`git log -1 2> /dev/null`
 
-    if [ "$BRANCH" != "" ]; then
-        if [[ "$STATUS" =~ "$DIVERGED" ]]; then
+    if [ "$STATUS" != "" ]; then
+        if [[ "$STATUS" =~ "$NOTHING_TO_COMMIT" ]]; then
+            PROMPT_COLOR=$RED
+            STATE=""
+        elif [[ "$STATUS" =~ "$DIVERGED" ]]; then
             PROMPT_COLOR=$RED
             STATE="${STATE}${RED}↕${NO_COLOR}"
         elif [[ "$STATUS" =~ "$BEHIND" ]]; then
@@ -222,7 +265,7 @@ git-prompt () {
             STATE="${STATE}${YELLOW}*${NO_COLOR}"
         fi
 
-        PS1="\n[\u] ${YELLOW}\w\a${NO_COLOR} (${PROMPT_COLOR}${BRANCH}${NO_COLOR}${STATE})\n$ "
+        PS1="\n[\u] ${YELLOW}\w\a${NO_COLOR} (${PROMPT_COLOR}${BRANCH}${NO_COLOR}${STATE}${NO_COLOR})\n\$ "
     else
         PS1="\n[\u] ${YELLOW}\w\a${NO_COLOR}\n\$ "
     fi
@@ -253,4 +296,3 @@ PROMPT_COMMAND=git-prompt
 export RENVDIR="$HOME/.renv"
 export PATH="$RENVDIR/active/bin:$PATH"
 export GEM_PATH="$RENVDIR/active/lib"
-

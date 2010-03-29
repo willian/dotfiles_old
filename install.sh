@@ -7,7 +7,6 @@ cp gitconfig ~/.gitconfig
 cp irbrc ~/.irbrc
 cp inputrc ~/.inputrc
 cp pezrc ~/.pezrc
-cp rake_completion.rb ~/.rake_completion.rb
 cp gemrc ~/.gemrc
 cp gitignore ~/.gitignore
 cp caprc ~/.caprc
