@@ -47,11 +47,6 @@ alias railsapp="rails -m http://gist.github.com/263273.txt"
 alias spec_rcov="rake spec:rcov && open coverage/index.html"
 alias rails_db_reset="rake db:drop && rake db:create && rake db:migrate"
 
-_rmate() {
-  mate $(ls -1 | egrep -v "(log|git|vendor|tmp|doc)" | egrep -v .DS_Store)
-}
-alias rmate="_rmate"
-
 shopt -s cdspell
 shopt -s nocaseglob
 shopt -s checkwinsize
@@ -83,41 +78,6 @@ if [ -f $CDHISTORY ]; then
     builtin cd "$dir" && clear
   fi
 fi
-
-# # Specify which ruby version to use
-# # Here's how my ruby is installed:
-# #
-# #   /usr/local/ruby/1.9.1-p376
-# #   /usr/local/ruby/1.8.7-p174
-# #   /usr/local/ruby/1.8.6-p383
-# #   /usr/local/ruby/active
-# #
-# # The active directory is a symlink to the active
-# # ruby version. This is also on the $PATH.
-# #
-# #   export PATH="/usr/local/ruby/active/ruby:$PATH"
-# use_ruby() {
-#   local root="/usr/local/ruby"
-#   local version="invalid"
-#
-#   if [ "$1" = "191" ]; then
-#     version="1.9.1-p376"
-#   elif [ "$1" = "187" ]; then
-#     version="1.8.7-p174"
-#   elif [ "$1" = "186" ]; then
-#     version="1.8.6-p383"
-#   fi
-#
-#   local rubydir="$root/$version"
-#
-#   if [ -d $rubydir ]; then
-#     echo "Activating Ruby $version"
-#     sudo rm $root/active && sudo ln -s $root/$version $root/active
-#     renv use base
-#   else
-#     echo "Specify a Ruby version: 186, 187, 191"
-#   fi
-# }
 
 # enter a recently created directory
 mkdir() { /bin/mkdir $@ && eval cd "\$$#"; }
@@ -196,9 +156,9 @@ git-prompt () {
       STATE="${STATE}${YELLOW}*${NO_COLOR}"
     fi
 
-    PS1="\n[\u] ${YELLOW}\w\a${NO_COLOR} (${PROMPT_COLOR}${BRANCH}${NO_COLOR}${STATE})\n$ "
+    PS1="\n[\u@\h] ${YELLOW}\w\a${NO_COLOR} (${PROMPT_COLOR}${BRANCH}${NO_COLOR}${STATE})\n$ "
   else
-    PS1="\n[\u] ${YELLOW}\w\a${NO_COLOR}\n\$ "
+    PS1="\n[\u@\h] ${YELLOW}\w\a${NO_COLOR}\n\$ "
   fi
 }
 
@@ -223,9 +183,5 @@ export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[00;32m'
 
 PROMPT_COMMAND=git-prompt
-
-# export RENVDIR="$HOME/.renv"
-# export PATH="$RENVDIR/active/bin:$PATH"
-# export GEM_PATH="$RENVDIR/active/lib"
 
 if [[ -s /Users/willian/.rvm/scripts/rvm ]] ; then source /Users/willian/.rvm/scripts/rvm ; fi
