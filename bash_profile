@@ -45,6 +45,7 @@ alias mysql="mysql --auto-rehash=TRUE"
 alias ni="lsof -i -Pn"
 alias railsapp="rails -m http://gist.github.com/263273.txt"
 alias spec_rcov="rake spec:rcov && open coverage/index.html"
+alias rails_db_reset="rake db:drop && rake db:create && rake db:migrate"
 
 _rmate() {
   mate $(ls -1 | egrep -v "(log|git|vendor|tmp|doc)" | egrep -v .DS_Store)
