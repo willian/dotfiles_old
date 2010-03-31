@@ -20,5 +20,5 @@ Host srvapache
 	HostName 192.168.0.145
 
 Host mordor
-	User root
-	HostName 192.168.0.152
+	User ikwa
+	HostName 192.168.0.139
