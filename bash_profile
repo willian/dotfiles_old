@@ -12,6 +12,7 @@ export HISTFILESIZE=100000
 export HISTSIZE=${HISTFILESIZE}
 export GREP_OPTIONS="--color=auto"
 export GREP_COLOR="4;33"
+export CLICOLOR="auto"
 export CDPATH=.:~:~/Sites:~/Sites/github
 export CDHISTORY="/tmp/cd-${USER}"
 
@@ -45,11 +46,10 @@ alias mysql="mysql --auto-rehash=TRUE"
 alias ni="lsof -i -Pn"
 alias railsapp="rails -m http://gist.github.com/263273.txt"
 alias spec_rcov="rake spec:rcov && open coverage/index.html"
-
-_rmate() {
-  mate $(ls -1 | egrep -v "(log|git|vendor|tmp|doc)" | egrep -v .DS_Store)
-}
-alias rmate="_rmate"
+alias pg_start="pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start"
+alias pg_stop="pg_ctl -D /usr/local/var/postgres stop -s -m fast"
+alias gvim='mvim -g'
+alias tvim='mvim --remote-tab'
 
 shopt -s cdspell
 shopt -s nocaseglob
@@ -83,41 +83,6 @@ if [ -f $CDHISTORY ]; then
   fi
 fi
 
-# # Specify which ruby version to use
-# # Here's how my ruby is installed:
-# #
-# #   /usr/local/ruby/1.9.1-p376
-# #   /usr/local/ruby/1.8.7-p174
-# #   /usr/local/ruby/1.8.6-p383
-# #   /usr/local/ruby/active
-# #
-# # The active directory is a symlink to the active
-# # ruby version. This is also on the $PATH.
-# #
-# #   export PATH="/usr/local/ruby/active/ruby:$PATH"
-# use_ruby() {
-#   local root="/usr/local/ruby"
-#   local version="invalid"
-#
-#   if [ "$1" = "191" ]; then
-#     version="1.9.1-p376"
-#   elif [ "$1" = "187" ]; then
-#     version="1.8.7-p174"
-#   elif [ "$1" = "186" ]; then
-#     version="1.8.6-p383"
-#   fi
-#
-#   local rubydir="$root/$version"
-#
-#   if [ -d $rubydir ]; then
-#     echo "Activating Ruby $version"
-#     sudo rm $root/active && sudo ln -s $root/$version $root/active
-#     renv use base
-#   else
-#     echo "Specify a Ruby version: 186, 187, 191"
-#   fi
-# }
-
 # enter a recently created directory
 mkdir() { /bin/mkdir $@ && eval cd "\$$#"; }
 
@@ -129,20 +94,26 @@ tinyurl () {
   cat $tmp | pbcopy
 }
 
+# Show conrrent rvm use vm version
+# TODO: Display corrent rvm gems set
+function rvm_version {
+  if [[ -f ~/.rvm/bin/rvm-prompt ]]; then
+    RVM_VERSION=`~/.rvm/bin/rvm-prompt`
+    GEM_SET="$(echo $GEM_PATH | awk -F'%' '{print $2}')"
+    if [[ -f "$(pwd)/Rakefile" ]] && [[ ! -z "$RVM_VERSION" ]]; then
+      echo "${RVM_VERSION}"
+    else
+      echo "this is not a ruby project"
+    fi
+  fi
+}
+
 # complete rake tasks
 complete -C ~/.rake_completion.rb -o default rake
 
-# # complete renv envs
-# _renvcomplete() {
-#   COMPREPLY=($(compgen -W "`NAME=${COMP_WORDS[COMP_CWORD]} renv complete`"))
-#   return 0
-# }
-#
-# complete -o default -o nospace -F _renvcomplete renv
-
 # github repository cloning
 # usage:
-#    github has_permalink       ~> will clone $USER repositories
+#    github textmate_bundles    ~> will clone $USER repositories
 #    github username repository ~> will clone someone else's
 github() {
   if [ $# = 1 ]; then
@@ -195,9 +166,9 @@ git-prompt () {
       STATE="${STATE}${YELLOW}*${NO_COLOR}"
     fi
 
-    PS1="\n[\u] ${YELLOW}\w\a${NO_COLOR} (${PROMPT_COLOR}${BRANCH}${NO_COLOR}${STATE})\n$ "
+    PS1="\n[\u@\h] ${YELLOW}\w\a${NO_COLOR} (${PROMPT_COLOR}${BRANCH}${NO_COLOR}${STATE}) (${YELLOW}$(rvm_version)${NO_COLOR})\n$ "
   else
-    PS1="\n[\u] ${YELLOW}\w\a${NO_COLOR}\n\$ "
+    PS1="\n[\u@\h] ${YELLOW}\w\a${NO_COLOR} (${YELLOW}$(rvm_version)${NO_COLOR})\n\$ "
   fi
 }
 
@@ -222,9 +193,5 @@ export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[00;32m'
 
 PROMPT_COMMAND=git-prompt
-
-# export RENVDIR="$HOME/.renv"
-# export PATH="$RENVDIR/active/bin:$PATH"
-# export GEM_PATH="$RENVDIR/active/lib"
 
 if [[ -s /Users/willian/.rvm/scripts/rvm ]] ; then source /Users/willian/.rvm/scripts/rvm ; fi
