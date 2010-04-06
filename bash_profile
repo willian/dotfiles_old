@@ -50,6 +50,7 @@ alias pg_start="pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/ser
 alias pg_stop="pg_ctl -D /usr/local/var/postgres stop -s -m fast"
 alias gvim='mvim -g'
 alias tvim='mvim --remote-tab'
+alias rails_db_reset="rake db:drop && rake db:create && rake db:migrate"
 
 shopt -s cdspell
 shopt -s nocaseglob

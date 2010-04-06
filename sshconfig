@@ -1,12 +1,24 @@
 Host willian
-  HostName willianfernandes.com.br
+	User willian
+	HostName willianfernandes.com.br
 
 Host brasil
-  User brasil-adm
-  HostName guest-brasil.netguestdns.com.br
-  Port 2222
+	User brasil-adm
+	HostName guest-brasil.netguestdns.com.br
+	Port 2222
 
 Host trident
-  User ikwa
-  HostName ikwa.com.br
+	User ikwa
+	HostName ikwa.com.br
 
+Host halls
+	User ikwa
+	HostName 192.168.0.172
+
+Host srvapache
+	User root
+	HostName 192.168.0.145
+
+Host mordor
+	User ikwa
+	HostName 192.168.0.139
