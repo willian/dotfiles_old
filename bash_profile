@@ -1,7 +1,4 @@
-export PATH="/usr/local/ruby/active/bin:$PATH"
 export PATH="/usr/local/git/bin:/usr/local/bin:/usr/local/sbin:/usr/local/mysql/bin:$PATH"
-export PATH="/Users/willian/.gem/ruby/1.8/bin:$PATH"
-export PATH="/Users/willian/.rvm/gems/ruby-1.9.1-p378/bin:$PATH"
 export PATH="/usr/local/mongodb/bin:$PATH"
 export EVENT_NOKQUEUE=1
 export MANPATH=/usr/local/git/man:$MANPATH
@@ -15,6 +12,9 @@ export GREP_COLOR="4;33"
 export CLICOLOR="auto"
 export CDPATH=.:~:~/Sites:~/Sites/github
 export CDHISTORY="/tmp/cd-${USER}"
+
+# Ruby on Rails
+export RAILS_ENV='development'
 
 # Colours
 BLUE="\[\033[0;34m\]"
@@ -57,8 +57,10 @@ shopt -s nocaseglob
 shopt -s checkwinsize
 shopt -s dotglob
 shopt -s extglob
-set -o ignoreeof
 unset MAILCHECK
+
+# Load RVM scripts
+if [[ -s /Users/willian/.rvm/scripts/rvm ]] ; then source /Users/willian/.rvm/scripts/rvm ; fi
 
 # Usage: f /some/path [grep options]
 f() {
@@ -194,5 +196,3 @@ export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[00;32m'
 
 PROMPT_COMMAND=git-prompt
-
-if [[ -s /Users/willian/.rvm/scripts/rvm ]] ; then source /Users/willian/.rvm/scripts/rvm ; fi
