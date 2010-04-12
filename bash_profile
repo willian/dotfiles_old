@@ -1,9 +1,11 @@
-export PATH="/usr/local/ruby/active/bin:$PATH"
-export PATH="/usr/local/git/bin:/usr/local/bin:/usr/local/sbin:/usr/local/mysql/bin:$PATH"
-export PATH="/usr/local/erlang/bin:/usr/local/couchdb/bin:/usr/local/spidermonkey/bin:/usr/local/erlang/lib/erlang/lib/rabbitmq_server-1.6.0/sbin:$PATH"
+export PATH="~/.scripts:/usr/local/ruby/active/bin:$PATH"
+export PATH="/usr/local/bin:/usr/local/sbin:/usr/local/mysql/bin:$PATH"
+export PATH="/usr/local/erlang/bin:/usr/local/couchdb/bin:/usr/local/spidermonkey/bin:$PATH"
+export PATH="/usr/local/erlang/lib/erlang/lib/rabbitmq_server-1.6.0/sbin:$PATH"
 export PATH="/usr/local/prince/bin:/usr/local/redis/bin:/usr/local/rhino:$PATH"
 export PATH="/usr/local/scala/bin/:/usr/local/php/pear/bin:/usr/local/activemq/bin:$PATH"
 export PATH="/usr/local/sphinx/bin:/usr/local/homebrew/bin:$PATH"
+export PATH="/Users/fnando/Sites/codeplace/bin:$PATH"
 export CLASSPATH="/usr/local/rhino:$CLASSPATH"
 export EVENT_NOKQUEUE=1
 export MANPATH=/usr/local/git/man:$MANPATH
@@ -17,6 +19,19 @@ export GREP_COLOR="4;33"
 export CDPATH=.:~:~/Sites:~/Sites/github
 export CDHISTORY="/tmp/cd-${USER}"
 
+export GEM_SPACES="$HOME/.gem/spaces"
+export GEM_HOME="$GEM_SPACES/active"
+export GEM_BIN="$GEM_SPACES/active/bin"
+export PATH="$GEM_BIN:$PATH"
+
+export LESS_TERMCAP_mb=$'\E[04;33m'
+export LESS_TERMCAP_md=$'\E[04;33m'
+export LESS_TERMCAP_me=$'\E[0m'
+export LESS_TERMCAP_se=$'\E[0m'
+export LESS_TERMCAP_so=$'\E[01;44;33m'
+export LESS_TERMCAP_ue=$'\E[0m'
+export LESS_TERMCAP_us=$'\E[00;32m'
+
 # Amazon EC2
 export EC2_HOME="/Users/fnando/.ec2"
 export EC2_PRIVATE_KEY="$EC2_HOME/pk.pem"
@@ -26,16 +41,16 @@ export PATH="$EC2_HOME/bin:$EC2_AMI_HOME/bin:$PATH"
 export JAVA_HOME="/Library/Java/Home"
 
 # Colours
-BLUE="\[\033[0;34m\]"
-NO_COLOR="\[\e[0m\]"
-GRAY="\[\033[1;30m\]"
-GREEN="\[\033[0;32m\]"
-LIGHT_GRAY="\[\033[0;37m\]"
-LIGHT_GREEN="\[\033[1;32m\]"
-LIGHT_RED="\[\033[1;31m\]"
-RED="\[\033[0;31m\]"
-WHITE="\[\033[1;37m\]"
-YELLOW="\[\033[0;33m\]"
+export BLUE="\[\033[0;34m\]"
+export NO_COLOR="\[\e[0m\]"
+export GRAY="\[\033[1;30m\]"
+export GREEN="\[\033[0;32m\]"
+export LIGHT_GRAY="\[\033[0;37m\]"
+export LIGHT_GREEN="\[\033[1;32m\]"
+export LIGHT_RED="\[\033[1;31m\]"
+export RED="\[\033[0;31m\]"
+export WHITE="\[\033[1;37m\]"
+export YELLOW="\[\033[0;33m\]"
 
 source ~/.git_completion.sh
 source ~/.bash_completion.sh
@@ -182,12 +197,6 @@ _rakecomplete() {
     return 0
 }
 
-# retrieve renv environments
-_renvcomplete() {
-    COMPREPLY=($(compgen -W "`NAME=${COMP_WORDS[COMP_CWORD]} renv complete`"))
-    return 0
-}
-
 # retrive list of all cheat sheets
 _cheatcomplete() {
     local words=`cheat all | sed 's/ *//' | grep -v "All Cheat"`
@@ -196,7 +205,6 @@ _cheatcomplete() {
     return 0
 }
 
-complete -o default -F _renvcomplete renv
 complete -o default -F _cheatcomplete cheat
 complete -o default -F _rakecomplete rake
 
@@ -218,13 +226,14 @@ github() {
     fi
 }
 
-git-prompt () {
+custom_prompt () {
     local BRANCH=`git branch 2> /dev/null | grep \* | sed 's/* //'`
 
     if [[ "$BRANCH" = "" ]]; then
         BRANCH=`git status 2> /dev/null | grep "On branch" | sed 's/# On branch //'`
     fi
 
+    local GEM_SPACE=`gem space 2> /dev/null | grep \* | sed 's/* //'`
     local STATUS=`git status 2>/dev/null`
     local PROMPT_COLOR=$GREEN
     local STATE=" "
@@ -236,6 +245,13 @@ git-prompt () {
     local CHANGED="# Changed but not updated"
     local TO_BE_COMMITED="# Changes to be committed"
     local LOG=`git log -1 2> /dev/null`
+    local RUBY_VERSION=`ruby -e "puts RUBY_VERSION"`
+
+    if [[ "$GEM_SPACE" != "" ]]; then
+        local GEM_PROMPT="${GRAY}[${GEM_SPACE}#${RUBY_VERSION}]${NO_COLOR} "
+    else
+        local GEM_PROMPT="${GRAY}[${RUBY_VERSION}]${NO_COLOR} "
+    fi
 
     if [ "$STATUS" != "" ]; then
         if [[ "$STATUS" =~ "$NOTHING_TO_COMMIT" ]]; then
@@ -265,9 +281,9 @@ git-prompt () {
             STATE="${STATE}${YELLOW}*${NO_COLOR}"
         fi
 
-        PS1="\n[\u] ${YELLOW}\w\a${NO_COLOR} (${PROMPT_COLOR}${BRANCH}${NO_COLOR}${STATE}${NO_COLOR})\n\$ "
+        PS1="\n${GEM_PROMPT}${YELLOW}\w\a${NO_COLOR} (${PROMPT_COLOR}${BRANCH}${NO_COLOR}${STATE}${NO_COLOR})\n\$ "
     else
-        PS1="\n[\u] ${YELLOW}\w\a${NO_COLOR}\n\$ "
+        PS1="\n${GEM_PROMPT}${YELLOW}\w\a${NO_COLOR}\n\$ "
     fi
 }
 
@@ -283,16 +299,4 @@ github-go () { open $(github-url); }
 git-scoreboard () { git log | grep '^Author' | sort | uniq -ci | sort -r; }
 manp () { man -t $* | ps2pdf - - | open -f -a Preview; }
 
-export LESS_TERMCAP_mb=$'\E[04;33m'
-export LESS_TERMCAP_md=$'\E[04;33m'
-export LESS_TERMCAP_me=$'\E[0m'
-export LESS_TERMCAP_se=$'\E[0m'
-export LESS_TERMCAP_so=$'\E[01;44;33m'
-export LESS_TERMCAP_ue=$'\E[0m'
-export LESS_TERMCAP_us=$'\E[00;32m'
-
-PROMPT_COMMAND=git-prompt
-
-export RENVDIR="$HOME/.renv"
-export PATH="$RENVDIR/active/bin:$PATH"
-export GEM_PATH="$RENVDIR/active/lib"
+PROMPT_COMMAND=custom_prompt
