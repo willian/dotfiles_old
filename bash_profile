@@ -22,6 +22,7 @@ export CDHISTORY="/tmp/cd-${USER}"
 export GEM_SPACES="$HOME/.gem/spaces"
 export GEM_HOME="$GEM_SPACES/active"
 export GEM_BIN="$GEM_SPACES/active/bin"
+export GEM_EDITOR="mate"
 export PATH="$GEM_BIN:$PATH"
 
 export LESS_TERMCAP_mb=$'\E[04;33m'
@@ -54,6 +55,7 @@ export YELLOW="\[\033[0;33m\]"
 
 source ~/.git_completion.sh
 source ~/.bash_completion.sh
+source ~/.gem_completion.sh
 
 alias js="java jline.ConsoleRunner org.mozilla.javascript.tools.shell.Main"
 alias ls="ls -G"
@@ -192,20 +194,11 @@ tinyurl () {
 _rakecomplete() {
     COMP_WORDBREAKS=${COMP_WORDBREAKS/\:/}
     local words=`rake -T | grep rake | sed 's/rake \([^ ]*\).*/\1/'`
-    local curw=${COMP_WORDS[COMP_CWORD]}
-    COMPREPLY=($(compgen -W "$words" -- $curw))
+    local cur=${COMP_WORDS[COMP_CWORD]}
+    COMPREPLY=($(compgen -W "$words" -- $cur))
     return 0
 }
 
-# retrive list of all cheat sheets
-_cheatcomplete() {
-    local words=`cheat all | sed 's/ *//' | grep -v "All Cheat"`
-    local curw=${COMP_WORDS[COMP_CWORD]}
-    COMPREPLY=($(compgen -W "$words" -- $curw))
-    return 0
-}
-
-complete -o default -F _cheatcomplete cheat
 complete -o default -F _rakecomplete rake
 
 # github repository cloning
