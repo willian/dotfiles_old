@@ -13,27 +13,37 @@ export CLICOLOR="auto"
 export CDPATH=.:~:~/Sites:~/Sites/github
 export CDHISTORY="/tmp/cd-${USER}"
 
+export GEM_EDITOR="mate"
+
+export LESS_TERMCAP_mb=$'\E[04;33m'
+export LESS_TERMCAP_md=$'\E[04;33m'
+export LESS_TERMCAP_me=$'\E[0m'
+export LESS_TERMCAP_se=$'\E[0m'
+export LESS_TERMCAP_so=$'\E[01;44;33m'
+export LESS_TERMCAP_ue=$'\E[0m'
+export LESS_TERMCAP_us=$'\E[00;32m'
+
 # Ruby on Rails
 export RAILS_ENV='development'
 
 # Colours
-BLUE="\[\033[0;34m\]"
-NO_COLOR="\[\e[0m\]"
-GRAY="\[\033[1;30m\]"
-GREEN="\[\033[0;32m\]"
-LIGHT_GRAY="\[\033[0;37m\]"
-LIGHT_GREEN="\[\033[1;32m\]"
-LIGHT_RED="\[\033[1;31m\]"
-RED="\[\033[0;31m\]"
-WHITE="\[\033[1;37m\]"
-YELLOW="\[\033[0;33m\]"
+export BLUE="\[\033[0;34m\]"
+export NO_COLOR="\[\e[0m\]"
+export GRAY="\[\033[1;30m\]"
+export GREEN="\[\033[0;32m\]"
+export LIGHT_GRAY="\[\033[0;37m\]"
+export LIGHT_GREEN="\[\033[1;32m\]"
+export LIGHT_RED="\[\033[1;31m\]"
+export RED="\[\033[0;31m\]"
+export WHITE="\[\033[1;37m\]"
+export YELLOW="\[\033[0;33m\]"
 
 source ~/.git_completion.sh
 source ~/.bash_completion.sh
+# source ~/.gem_completion.sh
 
 alias ls="ls -G"
 alias ll="ls -Glahs"
-alias colors="sh ~/.colors.sh"
 alias psgrep="ps aux | egrep -v egrep | egrep"
 alias showip="ifconfig | grep broadcast | sed 's/.*inet \(.*\) netmask.*/\1/'"
 alias myip="curl http://www.whatismyip.com/automation/n09230945.asp"
@@ -41,10 +51,10 @@ alias lock="/System/Library/CoreServices/Menu\ Extras/user.menu/Contents/Resourc
 alias quicksilver="open /Applications/Quicksilver.app"
 alias qs="quicksilver"
 alias top="top -o cpu"
-alias irb="irb --readline --prompt-mode simple"
 alias mysql="mysql --auto-rehash=TRUE"
 alias ni="lsof -i -Pn"
 alias railsapp="rails -m http://gist.github.com/263273.txt"
+alias make="make -j 2"
 alias spec_rcov="rake spec:rcov && open coverage/index.html"
 alias pg_start="pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start"
 alias pg_stop="pg_ctl -D /usr/local/var/postgres stop -s -m fast"
@@ -57,10 +67,11 @@ shopt -s nocaseglob
 shopt -s checkwinsize
 shopt -s dotglob
 shopt -s extglob
+shopt -s progcomp
 unset MAILCHECK
 
 # Load RVM scripts
-if [[ -s /Users/willian/.rvm/scripts/rvm ]] ; then source /Users/willian/.rvm/scripts/rvm ; fi
+if [[ -s $HOME/.rvm/scripts/rvm ]] ; then source $HOME/.rvm/scripts/rvm ; fi
 
 # Usage: f /some/path [grep options]
 f() {
@@ -86,6 +97,24 @@ if [ -f $CDHISTORY ]; then
   fi
 fi
 
+gzipped() {
+  local r=`curl --write-out "%{size_download}" --output /dev/null --silent $1`
+  local g=`curl -H "Accept-Encoding: gzip,deflate" --write-out "%{size_download}" --output /dev/null --silent $1`
+  local message
+
+  local rs=`expr ${r} / 1024`
+  local gs=`expr ${g} / 1024`
+
+  if [[ "$r" =  "$g" ]]; then
+    message="Regular: ${rs}KB\n\033[31m → Gzip: ${gs}KB\033[0m"
+  else
+    message="Regular: ${rs}KB\n\033[32m → Gzip: ${gs}KB\033[0m"
+  fi
+
+  echo -e $message
+  return 0
+}
+
 # enter a recently created directory
 mkdir() { /bin/mkdir $@ && eval cd "\$$#"; }
 
@@ -97,22 +126,15 @@ tinyurl () {
   cat $tmp | pbcopy
 }
 
-# Show conrrent rvm use vm version
-# TODO: Display corrent rvm gems set
-function rvm_version {
-  if [[ -f ~/.rvm/bin/rvm-prompt ]]; then
-    RVM_VERSION=`~/.rvm/bin/rvm-prompt`
-    GEM_SET="$(echo $GEM_PATH | awk -F'%' '{print $2}')"
-    if [[ -f "$(pwd)/Rakefile" ]] && [[ ! -z "$RVM_VERSION" ]]; then
-      echo "${RVM_VERSION}"
-    else
-      echo "this is not a ruby project"
-    fi
-  fi
+# retrieve all rake tasks
+_rakecomplete() {
+  COMP_WORDBREAKS=${COMP_WORDBREAKS/\:/}
+  local words=`rake -T | grep rake | sed 's/rake \([^ ]*\).*/\1/'`
+  local cur=${COMP_WORDS[COMP_CWORD]}
+  COMPREPLY=($(compgen -W "$words" -- $cur))
+  return 0
 }
-
-# complete rake tasks
-complete -C ~/.rake_completion.rb -o default rake
+complete -o default -F _rakecomplete rake
 
 # github repository cloning
 # usage:
@@ -132,20 +154,31 @@ github() {
   fi
 }
 
-git-prompt () {
+custom_prompt () {
   local BRANCH=`git branch 2> /dev/null | grep \* | sed 's/* //'`
+
+  if [[ "$BRANCH" = "" ]]; then
+    BRANCH=`git status 2> /dev/null | grep "On branch" | sed 's/# On branch //'`
+  fi
+
   local STATUS=`git status 2>/dev/null`
   local PROMPT_COLOR=$GREEN
   local STATE=" "
+  local NOTHING_TO_COMMIT="# Initial commit"
   local BEHIND="# Your branch is behind"
   local AHEAD="# Your branch is ahead"
   local UNTRACKED="# Untracked files"
   local DIVERGED="have diverged"
   local CHANGED="# Changed but not updated"
   local TO_BE_COMMITED="# Changes to be committed"
+  local LOG=`git log -1 2> /dev/null`
+  local RUBY_VERSION=`ruby -e "puts RUBY_VERSION"`
 
-  if [ "$BRANCH" != "" ]; then
-    if [[ "$STATUS" =~ "$DIVERGED" ]]; then
+  if [ "$STATUS" != "" ]; then
+    if [[ "$STATUS" =~ "$NOTHING_TO_COMMIT" ]]; then
+      PROMPT_COLOR=$RED
+      STATE=""
+    elif [[ "$STATUS" =~ "$DIVERGED" ]]; then
       PROMPT_COLOR=$RED
       STATE="${STATE}${RED}↕${NO_COLOR}"
     elif [[ "$STATUS" =~ "$BEHIND" ]]; then
@@ -169,9 +202,9 @@ git-prompt () {
       STATE="${STATE}${YELLOW}*${NO_COLOR}"
     fi
 
-    PS1="\n[\u@\h] ${YELLOW}\w\a${NO_COLOR} (${PROMPT_COLOR}${BRANCH}${NO_COLOR}${STATE}) (${YELLOW}$(rvm_version)${NO_COLOR})\n$ "
+    PS1="\n[\u@\h] ${YELLOW}\w\a${NO_COLOR} (${PROMPT_COLOR}${BRANCH}${NO_COLOR}${STATE}) (${YELLOW}${RUBY_VERSION}${NO_COLOR})\n$ "
   else
-    PS1="\n[\u@\h] ${YELLOW}\w\a${NO_COLOR} (${YELLOW}$(rvm_version)${NO_COLOR})\n\$ "
+    PS1="\n[\u@\h] ${YELLOW}\w\a${NO_COLOR}\n\$ "
   fi
 }
 
@@ -187,12 +220,4 @@ github-go () { open $(github-url); }
 git-scoreboard () { git log | grep '^Author' | sort | uniq -ci | sort -r; }
 manp () { man -t $* | ps2pdf - - | open -f -a Preview; }
 
-export LESS_TERMCAP_mb=$'\E[04;33m'
-export LESS_TERMCAP_md=$'\E[04;33m'
-export LESS_TERMCAP_me=$'\E[0m'
-export LESS_TERMCAP_se=$'\E[0m'
-export LESS_TERMCAP_so=$'\E[01;44;33m'
-export LESS_TERMCAP_ue=$'\E[0m'
-export LESS_TERMCAP_us=$'\E[00;32m'
-
-PROMPT_COMMAND=git-prompt
+PROMPT_COMMAND=custom_prompt
