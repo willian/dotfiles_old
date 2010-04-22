@@ -51,6 +51,11 @@ unless defined?(RUBY_ENGINE) && RUBY_ENGINE == "macruby"
       end
     end
 
+    if ENV.include?("RAILS_ENV") && !defined?(RAILS_DEFAULT_LOGGER)
+      require "logger"
+      RAILS_DEFAULT_LOGGER = Logger.new(STDOUT)
+    end
+
     IRB::Irb.class_eval do
       def output_value
         if @context.inspect?
