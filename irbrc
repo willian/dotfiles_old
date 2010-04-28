@@ -1,18 +1,12 @@
 unless defined?(RUBY_ENGINE) && RUBY_ENGINE == "macruby"
   begin
-    gems = %w(rubygems irb/completion irb/ext/save-history ap)
+    gems = %w(rubygems irb/completion irb/ext/save-history ap ruby-debug)
 
     gems.each do |gem_name|
       begin
         require gem_name
       rescue LoadError
       end
-    end
-
-    if RUBY_VERSION < "1.9"
-      require "ruby-debug"
-    else
-      require "ruby-debug19"
     end
 
     # Load some libraries
