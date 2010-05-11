@@ -1,6 +1,9 @@
 [user]
 	name = Willian Fernandes
 	email = willian@willianfernandes.com.br
+[github]
+	user = willian
+	token = *******
 [color]
 	diff = auto
 	status = auto

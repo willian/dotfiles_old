@@ -204,7 +204,17 @@ custom_prompt () {
 
     PS1="\n[\u@\h] ${YELLOW}\w\a${NO_COLOR} (${PROMPT_COLOR}${BRANCH}${NO_COLOR}${STATE}) (${YELLOW}${RUBY_VERSION}${NO_COLOR})\n$ "
   else
-    PS1="\n[\u@\h] ${YELLOW}\w\a${NO_COLOR}\n\$ "
+    PS1="\n[\u@\h] ${YELLOW}\w\a${NO_COLOR} (${YELLOW}${RUBY_VERSION}${NO_COLOR})\n\$ "
+  fi
+}
+
+git-merge () {
+  local BRANCH=`git branch 2> /dev/null | grep \* | sed 's/* //'`
+  if [ $# = 1 ]; then
+    git co $1 && git pull && git co $BRANCH && git merge $1 && git push
+  else
+    echo "Usage:";
+    echo "    git-merge <branch_with_changes>";
   fi
 }
 
