@@ -1,5 +1,6 @@
 cp autotest ~/.autotest
 cp bash_completion.sh ~/.bash_completion.sh
+cp rake_completion.rb ~/.rake_completion.rb
 cp bash_profile ~/.bash_profile
 cp colors.sh ~/.colors.sh
 cp git_completion.sh ~/.git_completion.sh
