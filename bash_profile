@@ -24,7 +24,7 @@ export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[00;32m'
 
 # Ruby on Rails
-export RAILS_ENV='development'
+# export RAILS_ENV='development'
 
 # Colours
 export BLUE="\[\033[0;34m\]"
