@@ -4,6 +4,15 @@
 # Copyright (C) 2010 Nando Vieira <http://simplesideias.com.br>
 # Distributed under the MIT License.
 #
+# Usage:
+# Just add the following line to your ~/.bash_profile or equivalent.
+#
+#   source ~/.gem_completion.sh
+#
+# Changelog:
+# Jul 14 10 - Added gem list to several commands.
+#
+
 _gem ()
 {
     local cmd=${COMP_WORDS[0]}
@@ -74,6 +83,7 @@ _gem ()
     HELP_OPTIONS="
         $COMMON_OPTIONS
         $COMMANDS
+        commands
     "
 
     INSTALL_OPTIONS="
@@ -194,6 +204,13 @@ _gem ()
         --version --undo
     "
 
+	case "$subcmd" in
+		cleanup|contents|dependency|install|list|lock|pristine|search|uninstall|unpack)
+			local gems=$(gem list | sed 's/(.*)//') ;;
+		lock|open)
+			local gems_with_version=$(ruby -rubygems -e 'puts Dir["{#{Gem::SourceIndex.installed_spec_directories.join(",")}}/*.gemspec"].collect {|s| File.basename(s).gsub(/\.gemspec$/, "")}') ;;
+	esac
+
     case "$subcmd" in
         build)
             words=$BUILD_OPTIONS ;;
@@ -202,25 +219,25 @@ _gem ()
         check)
             words=$CHECK_OPTIONS ;;
         cleanup)
-            words=$CLEANUP_OPTIONS ;;
+            words="$gems $CLEANUP_OPTIONS" ;;
         contents)
-            words=$CONTENTS_OPTIONS ;;
+            words="$gems $CONTENTS_OPTIONS" ;;
         dependency)
-            words=$DEPENDENCY_OPTIONS ;;
+            words="$gems $DEPENDENCY_OPTIONS" ;;
         environment)
             words=$=COMMON_OPTIONS ;;
         fetch)
-            words=$FETCH_OPTIONS ;;
+            words="$gems $FETCH_OPTIONS" ;;
         generate_index)
             words=$GENERATE_INDEX_OPTIONS ;;
         help)
             words=$HELP_OPTIONS ;;
         install)
-            words=$INSTALL_OPTIONS ;;
+            words="$gems $INSTALL_OPTIONS" ;;
         list)
-            words=$LIST_OPTIONS ;;
+            words="$gems $LIST_OPTIONS" ;;
         lock)
-            words=$LOCK_OPTIONS ;;
+            words="$gems_with_version $LOCK_OPTIONS" ;;
         migrate)
             words=$COMMON_OPTIONS ;;
         mirror)
@@ -228,10 +245,10 @@ _gem ()
         outdated)
             words=$OUTDATED_OPTIONS ;;
         open)
-            words=`ruby -rubygems -e 'puts Dir["{#{Gem::SourceIndex.installed_spec_directories.join(",")}}/*.gemspec"].collect {|s| File.basename(s).gsub(/\.gemspec$/, "")}'`
+            words="$gems_with_version"
             ;;
         pristine)
-            words=$PRISTINE_OPTIONS ;;
+            words="$gems $PRISTINE_OPTIONS" ;;
         push)
             words=$PUSH_OPTIONS ;;
         query)
@@ -239,7 +256,7 @@ _gem ()
         rdoc)
             words=$RDOC_OPTIONS ;;
         search)
-            words=$SEARCH_OPTIONS ;;
+            words="$gems $SEARCH_OPTIONS" ;;
         server)
             words=$SERVER_OPTIONS ;;
         sources)
@@ -253,9 +270,9 @@ _gem ()
         tumble)
             words=$COMMON_OPTIONS ;;
         uninstall)
-            words="$(gem list | sed 's/(.*)//') $UNINSTALL_OPTIONS" ;;
+            words="$gems $UNINSTALL_OPTIONS" ;;
         unpack)
-            words=$UNPACK_OPTIONS ;;
+            words="$gems $UNPACK_OPTIONS" ;;
         update)
             words=$UPDATE_OPTIONS ;;
         webhook)
