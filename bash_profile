@@ -5,7 +5,7 @@ export PATH="/usr/local/erlang/lib/erlang/lib/rabbitmq_server-1.6.0/sbin:$PATH"
 export PATH="/usr/local/prince/bin:/usr/local/redis/bin:/usr/local/rhino:$PATH"
 export PATH="/usr/local/scala/bin/:/usr/local/php/pear/bin:/usr/local/activemq/bin:$PATH"
 export PATH="/usr/local/sphinx/bin:/usr/local/homebrew/bin:$PATH"
-export PATH="/Users/fnando/Sites/codeplace/bin:$PATH"
+export PATH="/usr/local/mongodb/bin:/usr/local/mtasc:/usr/local/haxe:/usr/local/flex/bin:$PATH"
 export CLASSPATH="/usr/local/rhino:$CLASSPATH"
 export EVENT_NOKQUEUE=1
 export MANPATH=/usr/local/git/man:$MANPATH
@@ -76,6 +76,8 @@ alias jsonget="curl -X GET -H 'Accept: application/json'"
 alias xmlpost="curl -X POST -H 'Accept: application/xml'"
 alias xmlput="curl -X PUT -H 'Accept: application/xml'"
 alias xmldelete="curl -X DELETE -H 'Accept: application/xml'"
+alias r="rails"
+alias tunnel="sudo ssh -vND localhost:666 fnando@simplesideias.com.br"
 
 shopt -s cdspell
 shopt -s nocaseglob
@@ -97,8 +99,8 @@ f() {
 railsapp() {
     clear
     cd ~/Sites
-    renv use "$1"
-    renv install rails
+    gem space "$1"
+    gem install rails
     rails -m http://gist.github.com/221073.txt "$1"
 }
 
@@ -122,11 +124,16 @@ fi
 # Specify which ruby version to use
 # Here's how my ruby is installed:
 #
+#   /usr/local/ruby/1.9.2-rc2
+#   /usr/local/ruby/1.9.2-preview3
+#   /usr/local/ruby/1.9.1-p429
 #   /usr/local/ruby/1.9.1-p243
 #   /usr/local/ruby/1.9.1-p376
+#   /usr/local/ruby/1.8.7-p249
+#   /usr/local/ruby/1.8.7-p299
 #   /usr/local/ruby/1.8.7-p174
 #   /usr/local/ruby/1.8.6-p383
-#   /usr/local/ruby/REE
+#   /usr/local/ruby/ree-2010.02
 #   /usr/local/ruby/active
 #
 # The active directory is a symlink to the active
@@ -134,31 +141,31 @@ fi
 #
 #   export PATH="/usr/local/ruby/active/ruby:$PATH"
 use_ruby() {
-  local root="/usr/local/ruby"
-  local version="invalid"
+	local root="/usr/local/ruby"
+	local version="invalid"
 
-  if [ "$1" = "192" ]; then
-      version="1.9.2-preview1"
-  elif [ "$1" = "191" ]; then
-    # version="1.9.1-p243"
-    version="1.9.1-p376"
-  elif [ "$1" = "187" ]; then
-    version="1.8.7-p174"
-  elif [ "$1" = "186" ]; then
-      version="1.8.6-p383"
-  elif [ "$1" = "ree" ]; then
-      version="REE"
-  fi
+	if [ "$1" = "192" ]; then
+		version="1.9.2-rc2"
+	elif [ "$1" = "191" ]; then
+		version="1.9.1-p429"
+	elif [ "$1" = "187" ]; then
+		version="1.8.7-p299"
+	elif [ "$1" = "186" ]; then
+		version="1.8.6-p383"
+	elif [ "$1" = "ree" ]; then
+		version="ree-2010.02"
+	fi
 
-  local rubydir="$root/$version"
+	local rubydir="$root/$version"
 
-  if [ -d $rubydir ]; then
-    echo "Activating Ruby $version"
-    sudo rm $root/active && sudo ln -s $root/$version $root/active
-    renv use base
-  else
-    echo "Specify a Ruby version: 186, 187, 191, 192, ree"
-  fi
+	if [ -d $rubydir ]; then
+		echo "Activating Ruby $version"
+		sudo rm $root/active && sudo ln -s $root/$version $root/active
+		gem space base
+	else
+		echo "Specify a Ruby version: 186, 187, 191, 192, ree"
+		exit 1
+	fi
 }
 
 gzipped() {
@@ -226,7 +233,11 @@ custom_prompt () {
         BRANCH=`git status 2> /dev/null | grep "On branch" | sed 's/# On branch //'`
     fi
 
+    local RUBY_VERSION=`ruby -e "puts RUBY_VERSION"`
     local GEM_SPACE=`gem space 2> /dev/null | grep \* | sed 's/* //'`
+    local RAILS_VERSION=`rails -v 2> /dev/null | sed 's/Rails //'`
+    local RAILS_PROMPT=""
+    local RUBY_PROMPT=""
     local STATUS=`git status 2>/dev/null`
     local PROMPT_COLOR=$GREEN
     local STATE=" "
@@ -238,12 +249,15 @@ custom_prompt () {
     local CHANGED="# Changed but not updated"
     local TO_BE_COMMITED="# Changes to be committed"
     local LOG=`git log -1 2> /dev/null`
-    local RUBY_VERSION=`ruby -e "puts RUBY_VERSION"`
+
+    if [[ "$RAILS_VERSION" != "" ]]; then
+        RAILS_PROMPT="${RAILS_VERSION}@"
+    fi
 
     if [[ "$GEM_SPACE" != "" ]]; then
-        local GEM_PROMPT="${GRAY}[${GEM_SPACE}#${RUBY_VERSION}]${NO_COLOR} "
+        RUBY_PROMPT="${GRAY}[${RAILS_PROMPT}${GEM_SPACE}#${RUBY_VERSION}]${NO_COLOR} "
     else
-        local GEM_PROMPT="${GRAY}[${RUBY_VERSION}]${NO_COLOR} "
+        RUBY_PROMPT="${GRAY}[${RAILS_PROMPT}${RUBY_VERSION}]${NO_COLOR} "
     fi
 
     if [ "$STATUS" != "" ]; then
@@ -274,9 +288,9 @@ custom_prompt () {
             STATE="${STATE}${YELLOW}*${NO_COLOR}"
         fi
 
-        PS1="\n${GEM_PROMPT}${YELLOW}\w\a${NO_COLOR} (${PROMPT_COLOR}${BRANCH}${NO_COLOR}${STATE}${NO_COLOR})\n\$ "
+        PS1="\n${RUBY_PROMPT}${YELLOW}\w\a${NO_COLOR} (${PROMPT_COLOR}${BRANCH}${NO_COLOR}${STATE}${NO_COLOR})\n\$ "
     else
-        PS1="\n${GEM_PROMPT}${YELLOW}\w\a${NO_COLOR}\n\$ "
+        PS1="\n${RUBY_PROMPT}${YELLOW}\w\a${NO_COLOR}\n\$ "
     fi
 }
 
