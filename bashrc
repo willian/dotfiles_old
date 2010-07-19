@@ -1,9 +1,8 @@
-export PATH="/usr/local/git/bin:/usr/local/bin:/usr/local/sbin:/usr/local/mysql/bin:$PATH"
-export PATH="/usr/local/mongodb/bin:$PATH"
+export PATH="/usr/local/bin:/usr/local/sbin:$PATH"
 export EVENT_NOKQUEUE=1
 export MANPATH=/usr/local/git/man:$MANPATH
-export EDITOR="/usr/bin/vim"
-export SVN_EDITOR="/usr/bin/vim"
+export EDITOR="vim"
+export SVN_EDITOR="$EDITOR"
 export HISTCONTROL=erasedups
 export HISTFILESIZE=100000
 export HISTSIZE=${HISTFILESIZE}
@@ -11,9 +10,8 @@ export GREP_OPTIONS="--color=auto"
 export GREP_COLOR="4;33"
 export CLICOLOR="auto"
 export CDPATH=.:~:~/Sites/rails_app:~/Sites:~/GitHub
-# export CDHISTORY="/tmp/cd-${USER}"
 
-export GEM_EDITOR="vim"
+export GEM_EDITOR="$EDITOR"
 
 export LESS_TERMCAP_mb=$'\E[04;33m'
 export LESS_TERMCAP_md=$'\E[04;33m'
@@ -40,16 +38,12 @@ export YELLOW="\[\033[0;33m\]"
 
 source ~/.git_completion.sh
 source ~/.bash_completion.sh
-# source ~/.gem_completion.sh
 
 alias ls="ls -G"
 alias ll="ls -Glahs"
 alias psgrep="ps aux | egrep -v egrep | egrep"
 alias showip="ifconfig | grep broadcast | sed 's/.*inet \(.*\) netmask.*/\1/'"
 alias myip="curl http://www.whatismyip.com/automation/n09230945.asp"
-alias lock="/System/Library/CoreServices/Menu\ Extras/user.menu/Contents/Resources/CGSession -suspend"
-alias quicksilver="open /Applications/Quicksilver.app"
-alias qs="quicksilver"
 alias top="top -o cpu"
 alias mysql="mysql --auto-rehash=TRUE"
 alias ni="lsof -i -Pn"
@@ -58,8 +52,8 @@ alias make="make -j 2"
 alias spec_rcov="rake spec:rcov && open coverage/index.html"
 alias pg_start="pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start"
 alias pg_stop="pg_ctl -D /usr/local/var/postgres stop -s -m fast"
-alias vim='mvim -g'
-alias gvim='mvim -g'
+alias gvim='mvim -go'
+alias rvim='mvim --remote'
 alias tvim='mvim --remote-tab'
 alias rails_db_reset="rake db:drop && rake db:create && rake db:migrate"
 
@@ -84,20 +78,6 @@ f() {
 # reload source
 reload() { source ~/.bash_profile; }
 
-# # list directory after cd; also save the last directory
-# # and open it when a new tab is created
-# cd() {
-  # builtin cd "${@:-$HOME}" && ls && pwd > $CDHISTORY;
-# }
-
-# if [ -f $CDHISTORY ]; then
-  # dir=$(cat $CDHISTORY)
-
-  # if [ -d "$dir" ]; then
-    # builtin cd "$dir" && clear
-  # fi
-# fi
-
 gzipped() {
   local r=`curl --write-out "%{size_download}" --output /dev/null --silent $1`
   local g=`curl -H "Accept-Encoding: gzip,deflate" --write-out "%{size_download}" --output /dev/null --silent $1`
@@ -115,9 +95,6 @@ gzipped() {
   echo -e $message
   return 0
 }
-
-# # enter a recently created directory
-# mkdir() { /bin/mkdir $@ && eval cd "\$$#"; }
 
 # get the tinyurl
 tinyurl () {
