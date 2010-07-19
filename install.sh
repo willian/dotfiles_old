@@ -10,6 +10,7 @@ cp pezrc ~/.pezrc
 cp gemrc ~/.gemrc
 cp gitignore ~/.gitignore
 cp caprc ~/.caprc
+cp finder-path.applescript ~/.finder-path.applescript
 
 sudo cp grabbit /usr/local/bin
 sudo chmod +x /usr/local/bin/grabbit

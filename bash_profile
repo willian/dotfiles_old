@@ -57,6 +57,9 @@ source ~/.git_completion.sh
 source ~/.bash_completion.sh
 source ~/.gem_completion.sh
 
+alias cdto="cd `osascript ~/.finder-path.applescript`"
+alias redis="redis-server"
+alias growl="growlnotify"
 alias js="java jline.ConsoleRunner org.mozilla.javascript.tools.shell.Main"
 alias ls="ls -G"
 alias ll="ls -Glahs"
@@ -85,22 +88,21 @@ shopt -s dotglob
 shopt -s extglob
 shopt -s progcomp
 set -o ignoreeof
-unset MAILCHECK
+unset MAILCHECK               # disable "you have mail" warning
+ulimit -S -c 0                # disable core dump
+bind "set completion-ignore-case on"    # ignore case on bash completion
+bind "set mark-symlinked-directories on"  # add trailing slash to symlinked directories
+
+# Set window title
+title() {
+  echo -ne "\033]0;$@\007";
+}
 
 # Usage: f /some/path [grep options]
 f() {
-    local path="$1"
-    shift
-    find "$path" -follow -name '*' | xargs grep "$*"
-}
-
-# Create a new Rails app using my own template
-railsapp() {
-    clear
-    cd ~/Sites
-    gem space "$1"
-    gem install rails
-    rails -m http://gist.github.com/221073.txt "$1"
+  local path="$1"
+  shift
+  find "$path" -follow -name '*' | xargs grep "$*"
 }
 
 # reload source
@@ -109,15 +111,15 @@ reload() { source ~/.bash_profile; }
 # list directory after cd; also save the last directory
 # and open it when a new tab is created
 cd() {
-    builtin cd "${@:-$HOME}" && ls && pwd > $CDHISTORY;
+  builtin cd "${@:-$HOME}" && ls && pwd > $CDHISTORY;
 }
 
 if [ -f $CDHISTORY ]; then
-    dir=$(cat $CDHISTORY)
+  dir=$(cat $CDHISTORY)
 
-    if [ -d "$dir" ]; then
-        builtin cd "$dir" && clear
-    fi
+  if [ -d "$dir" ]; then
+    builtin cd "$dir" && clear
+  fi
 fi
 
 # Specify which ruby version to use
@@ -140,49 +142,49 @@ fi
 #
 #   export PATH="/usr/local/ruby/active/ruby:$PATH"
 use_ruby() {
-	local root="/usr/local/ruby"
-	local version="invalid"
+  local root="/usr/local/ruby"
+  local version="invalid"
 
-	if [ "$1" = "192" ]; then
-		version="1.9.2-rc2"
-	elif [ "$1" = "191" ]; then
-		version="1.9.1-p429"
-	elif [ "$1" = "187" ]; then
-		version="1.8.7-p299"
-	elif [ "$1" = "186" ]; then
-		version="1.8.6-p383"
-	elif [ "$1" = "ree" ]; then
-		version="ree-2010.02"
-	fi
+  if [ "$1" = "192" ]; then
+  version="1.9.2-rc2"
+  elif [ "$1" = "191" ]; then
+  version="1.9.1-p243"
+  elif [ "$1" = "187" ]; then
+  version="1.8.7-p299"
+  elif [ "$1" = "186" ]; then
+  version="1.8.6-p383"
+  elif [ "$1" = "ree" ]; then
+  version="ree-2010.02"
+  fi
 
-	local rubydir="$root/$version"
+  local rubydir="$root/$version"
 
-	if [ -d $rubydir ]; then
-		echo "Activating Ruby $version"
-		sudo rm $root/active && sudo ln -s $root/$version $root/active
-		gem space base
-	else
-		echo "Specify a Ruby version: 186, 187, 191, 192, ree"
-		exit 1
-	fi
+  if [ -d $rubydir ]; then
+  echo "Activating Ruby $version"
+  sudo rm $root/active && sudo ln -s $root/$version $root/active
+  gem space base
+  else
+  echo "Specify a Ruby version: 186, 187, 191, 192, ree"
+  exit 1
+  fi
 }
 
-gzipped() {
-    local r=`curl --write-out "%{size_download}" --output /dev/null --silent $1`
-    local g=`curl -H "Accept-Encoding: gzip,deflate" --write-out "%{size_download}" --output /dev/null --silent $1`
-    local message
+check_gzip_request() {
+  local r=`curl --write-out "%{size_download}" --output /dev/null --silent $1`
+  local g=`curl -H "Accept-Encoding: gzip,deflate" --write-out "%{size_download}" --output /dev/null --silent $1`
+  local message
 
-    local rs=`expr ${r} / 1024`
-    local gs=`expr ${g} / 1024`
+  local rs=`expr ${r} / 1024`
+  local gs=`expr ${g} / 1024`
 
-    if [[ "$r" =  "$g" ]]; then
-        message="Regular: ${rs}KB\n\033[31m → Gzip: ${gs}KB\033[0m"
-    else
-        message="Regular: ${rs}KB\n\033[32m → Gzip: ${gs}KB\033[0m"
-    fi
+  if [[ "$r" =  "$g" ]]; then
+    message="Regular: ${rs}KB\n\033[31m → Gzip: ${gs}KB\033[0m"
+  else
+    message="Regular: ${rs}KB\n\033[32m → Gzip: ${gs}KB\033[0m"
+  fi
 
-    echo -e $message
-    return 0
+  echo -e $message
+  return 0
 }
 
 # enter a recently created directory
@@ -190,115 +192,115 @@ mkdir() { /bin/mkdir $@ && eval cd "\$$#"; }
 
 # get the tinyurl
 tinyurl () {
-    local tmp=/tmp/tinyurl
-    rm $tmp > /dev/null 2>&1
-    wget "http://tinyurl.com/api-create.php?url=${1}" -O $tmp > /dev/null 2>&1
-    cat $tmp | pbcopy
+  local tmp=/tmp/tinyurl
+  rm $tmp > /dev/null 2>&1
+  wget "http://tinyurl.com/api-create.php?url=${1}" -O $tmp > /dev/null 2>&1
+  cat $tmp | pbcopy
 }
 
 # retrieve all rake tasks
 _rakecomplete() {
-    COMP_WORDBREAKS=${COMP_WORDBREAKS/\:/}
-    local words=`rake -T | grep rake | sed 's/rake \([^ ]*\).*/\1/'`
-    local cur=${COMP_WORDS[COMP_CWORD]}
-    COMPREPLY=($(compgen -W "$words" -- $cur))
-    return 0
+  COMP_WORDBREAKS=${COMP_WORDBREAKS/\:/}
+  local words=`rake -T | grep rake | sed 's/rake \([^ ]*\).*/\1/'`
+  local cur=${COMP_WORDS[COMP_CWORD]}
+  COMPREPLY=($(compgen -W "$words" -- $cur))
+  return 0
 }
 
 complete -o default -F _rakecomplete rake
 
 # github repository cloning
 # usage:
-#    github has_permalink       ~> will clone $USER repositories
-#    github username repository ~> will clone someone else's
+#  github has_permalink     ~> will clone $USER repositories
+#  github username repository ~> will clone someone else's
 github() {
-    if [ $# = 1 ]; then
-        git clone git@github.com:$USER/$1.git;
-        builtin cd $1 && ls;
-    elif [ $# = 2 ]; then
-        git clone git://github.com/$1/$2.git;
-        builtin cd $2 && ls;
-    else
-        echo "Usage:";
-        echo "    github <repo>        ~> will clone $USER's <repo>";
-        echo "    github <user> <repo> ~> will clone <user>'s <repo>";
-    fi
+  if [ $# = 1 ]; then
+    git clone git@github.com:$USER/$1.git;
+    builtin cd $1 && ls;
+  elif [ $# = 2 ]; then
+    git clone git://github.com/$1/$2.git;
+    builtin cd $2 && ls;
+  else
+    echo "Usage:";
+    echo "  github <repo>    ~> will clone $USER's <repo>";
+    echo "  github <user> <repo> ~> will clone <user>'s <repo>";
+  fi
 }
 
 custom_prompt () {
-    local BRANCH=`git branch 2> /dev/null | grep \* | sed 's/* //'`
+  local BRANCH=`git branch 2> /dev/null | grep \* | sed 's/* //'`
 
-    if [[ "$BRANCH" = "" ]]; then
-        BRANCH=`git status 2> /dev/null | grep "On branch" | sed 's/# On branch //'`
-    fi
+  if [[ "$BRANCH" = "" ]]; then
+    BRANCH=`git status 2> /dev/null | grep "On branch" | sed 's/# On branch //'`
+  fi
 
-    local RUBY_VERSION=`ruby -e "puts RUBY_VERSION"`
-    local GEM_SPACE=`gem space 2> /dev/null | grep \* | sed 's/* //'`
-    local RAILS_VERSION=`rails -v 2> /dev/null | sed 's/Rails //'`
-    local RAILS_PROMPT=""
-    local RUBY_PROMPT=""
-    local STATUS=`git status 2>/dev/null`
-    local PROMPT_COLOR=$GREEN
-    local STATE=" "
-    local NOTHING_TO_COMMIT="# Initial commit"
-    local BEHIND="# Your branch is behind"
-    local AHEAD="# Your branch is ahead"
-    local UNTRACKED="# Untracked files"
-    local DIVERGED="have diverged"
-    local CHANGED="# Changed but not updated"
-    local TO_BE_COMMITED="# Changes to be committed"
-    local LOG=`git log -1 2> /dev/null`
+  local RUBY_VERSION=`ruby -e "puts RUBY_VERSION"`
+  local GEM_SPACE=`gem space 2> /dev/null | grep \* | sed 's/* //'`
+  local RAILS_VERSION=`rails -v 2> /dev/null | sed 's/Rails //'`
+  local RAILS_PROMPT=""
+  local RUBY_PROMPT=""
+  local STATUS=`git status 2>/dev/null`
+  local PROMPT_COLOR=$GREEN
+  local STATE=" "
+  local NOTHING_TO_COMMIT="# Initial commit"
+  local BEHIND="# Your branch is behind"
+  local AHEAD="# Your branch is ahead"
+  local UNTRACKED="# Untracked files"
+  local DIVERGED="have diverged"
+  local CHANGED="# Changed but not updated"
+  local TO_BE_COMMITED="# Changes to be committed"
+  local LOG=`git log -1 2> /dev/null`
 
-    if [[ "$RAILS_VERSION" != "" ]]; then
-        RAILS_PROMPT="${RAILS_VERSION}@"
-    fi
+  if [[ "$RAILS_VERSION" != "" ]]; then
+    RAILS_PROMPT="${RAILS_VERSION}@"
+  fi
 
-    if [[ "$GEM_SPACE" != "" ]]; then
-        RUBY_PROMPT="${GRAY}[${RAILS_PROMPT}${GEM_SPACE}#${RUBY_VERSION}]${NO_COLOR} "
+  if [[ "$GEM_SPACE" != "" ]]; then
+    RUBY_PROMPT="${GRAY}[${RAILS_PROMPT}${GEM_SPACE}#${RUBY_VERSION}]${NO_COLOR} "
+  else
+    RUBY_PROMPT="${GRAY}[${RAILS_PROMPT}${RUBY_VERSION}]${NO_COLOR} "
+  fi
+
+  if [ "$STATUS" != "" ]; then
+    if [[ "$STATUS" =~ "$NOTHING_TO_COMMIT" ]]; then
+      PROMPT_COLOR=$RED
+      STATE=""
+    elif [[ "$STATUS" =~ "$DIVERGED" ]]; then
+      PROMPT_COLOR=$RED
+      STATE="${STATE}${RED}↕${NO_COLOR}"
+    elif [[ "$STATUS" =~ "$BEHIND" ]]; then
+      PROMPT_COLOR=$RED
+      STATE="${STATE}${RED}↓${NO_COLOR}"
+    elif [[ "$STATUS" =~ "$AHEAD" ]]; then
+      PROMPT_COLOR=$RED
+      STATE="${STATE}${RED}↑${NO_COLOR}"
+    elif [[ "$STATUS" =~ "$CHANGED" ]]; then
+      PROMPT_COLOR=$RED
+      STATE=""
+    elif [[ "$STATUS" =~ "$TO_BE_COMMITED" ]]; then
+      PROMPT_COLOR=$RED
+      STATE=""
     else
-        RUBY_PROMPT="${GRAY}[${RAILS_PROMPT}${RUBY_VERSION}]${NO_COLOR} "
+      PROMPT_COLOR=$GREEN
+      STATE=""
     fi
 
-    if [ "$STATUS" != "" ]; then
-        if [[ "$STATUS" =~ "$NOTHING_TO_COMMIT" ]]; then
-            PROMPT_COLOR=$RED
-            STATE=""
-        elif [[ "$STATUS" =~ "$DIVERGED" ]]; then
-            PROMPT_COLOR=$RED
-            STATE="${STATE}${RED}↕${NO_COLOR}"
-        elif [[ "$STATUS" =~ "$BEHIND" ]]; then
-            PROMPT_COLOR=$RED
-            STATE="${STATE}${RED}↓${NO_COLOR}"
-        elif [[ "$STATUS" =~ "$AHEAD" ]]; then
-            PROMPT_COLOR=$RED
-            STATE="${STATE}${RED}↑${NO_COLOR}"
-        elif [[ "$STATUS" =~ "$CHANGED" ]]; then
-            PROMPT_COLOR=$RED
-            STATE=""
-        elif [[ "$STATUS" =~ "$TO_BE_COMMITED" ]]; then
-            PROMPT_COLOR=$RED
-            STATE=""
-        else
-            PROMPT_COLOR=$GREEN
-            STATE=""
-        fi
-
-        if [[ "$STATUS" =~ "$UNTRACKED" ]]; then
-            STATE="${STATE}${YELLOW}*${NO_COLOR}"
-        fi
-
-        PS1="\n${RUBY_PROMPT}${YELLOW}\w\a${NO_COLOR} (${PROMPT_COLOR}${BRANCH}${NO_COLOR}${STATE}${NO_COLOR})\n\$ "
-    else
-        PS1="\n${RUBY_PROMPT}${YELLOW}\w\a${NO_COLOR}\n\$ "
+    if [[ "$STATUS" =~ "$UNTRACKED" ]]; then
+      STATE="${STATE}${YELLOW}*${NO_COLOR}"
     fi
+
+    PS1="\n${RUBY_PROMPT}${YELLOW}\w\a${NO_COLOR} (${PROMPT_COLOR}${BRANCH}${NO_COLOR}${STATE}${NO_COLOR})\n\$ "
+  else
+    PS1="\n${RUBY_PROMPT}${YELLOW}\w\a${NO_COLOR}\n\$ "
+  fi
 }
 
 # taken from http://github.com/bryanl/zshkit/
 git-track () {
-    local BRANCH=`git branch 2> /dev/null | grep \* | sed 's/* //'`
-	git config branch.$BRANCH.remote origin
-	git config branch.$BRANCH.merge refs/heads/$BRANCH
-	echo "tracking origin/$BRANCH"
+  local BRANCH=`git branch 2> /dev/null | grep \* | sed 's/* //'`
+  git config branch.$BRANCH.remote origin
+  git config branch.$BRANCH.merge refs/heads/$BRANCH
+  echo "tracking origin/$BRANCH"
 }
 github-url () { git config remote.origin.url | sed -En 's/git(@|:\/\/)github.com(:|\/)(.+)\/(.+).git/https:\/\/github.com\/\3\/\4/p'; }
 github-go () { open $(github-url); }
