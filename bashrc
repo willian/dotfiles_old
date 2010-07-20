@@ -55,6 +55,7 @@ alias gvim='mvim -go'
 alias rvim='mvim --remote'
 alias tvim='mvim --remote-tab'
 alias rails_db_reset="rake db:drop && rake db:create && rake db:migrate"
+alias twiki="rake db:migrate && rake db:migrate:redo && rake db:test:prepare"
 
 shopt -s cdspell
 shopt -s nocaseglob
