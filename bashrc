@@ -47,7 +47,6 @@ alias myip="curl http://www.whatismyip.com/automation/n09230945.asp"
 alias top="top -o cpu"
 alias mysql="mysql --auto-rehash=TRUE"
 alias ni="lsof -i -Pn"
-alias railsapp="rails -m http://gist.github.com/263273.txt"
 alias make="make -j 2"
 alias spec_rcov="rake spec:rcov && open coverage/index.html"
 alias pg_start="pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start"
@@ -67,6 +66,26 @@ unset MAILCHECK
 
 # Load RVM scripts
 if [[ -s $HOME/.rvm/scripts/rvm ]] ; then source $HOME/.rvm/scripts/rvm ; fi
+
+# Usage: railsapp my_app
+#        railsapp my_app cucumber
+railsapp() {
+  if [ $# = 1 ]; then
+    rails new $1 -J -T -m http://github.com/willian/rails3-app/raw/master/app.rb
+  elif [ $# = 2 ]; then
+    if [ "$2" = "cucumber" ]; then
+      rails new $1 -J -T -m http://github.com/willian/rails3-app/raw/master/cuke.rb
+    else
+      echo "Usage:";
+      echo "    railsapp <app_name>           ~> will create a rails 3 app without cucumber";
+      echo "    railsapp <app_name> cucumber  ~> will create a rails 3 app with cucumber";
+    fi
+  else
+    echo "Usage:";
+    echo "    railsapp <app_name>           ~> will create a rails 3 app without cucumber";
+    echo "    railsapp <app_name> cucumber  ~> will create a rails 3 app with cucumber";
+  fi
+}
 
 # Usage: f /some/path [grep options]
 f() {
