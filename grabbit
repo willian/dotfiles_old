@@ -18,5 +18,4 @@ name.chomp!("-")
 name << "-" + Time.now.strftime("%Y%m%d%H%M%S")
 
 `mv /tmp/screenshot-full.png /tmp/#{name}.png`
-`scp /tmp/#{name}.png simplesideias:f.simplesideias.com.br/ui`
-`rm /tmp/#{name}.png`
+`open /tmp/#{name}.png`
