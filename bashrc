@@ -251,6 +251,16 @@ git-merge () {
   fi
 }
 
+git-new-branch() {
+  if [ $# = 1 ]; then
+    git push origin origin/master:refs/heads/$1
+    git co --track -b $1 origin/$1
+  else
+    echo "Usage:";
+    echo "    git-new-branch <branch_name>";
+  fi
+}
+
 # taken from http://github.com/bryanl/zshkit/
 git-track () {
   local BRANCH=`git branch 2> /dev/null | grep \* | sed 's/* //'`
