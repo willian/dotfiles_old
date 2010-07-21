@@ -71,16 +71,32 @@ if [[ -s $HOME/.rvm/scripts/rvm ]] ; then source $HOME/.rvm/scripts/rvm ; fi
 # Usage: railsapp my_app
 #        railsapp my_app cucumber
 railsapp() {
+  local create_rails_app="N"
+  local create_rails_app_with_cucumber="N"
   if [ $# = 1 ]; then
-    rails new $1 -J -T -m http://github.com/willian/rails3-app/raw/master/app.rb
+    local create_rails_app="Y"
   elif [ $# = 2 ]; then
     if [ "$2" = "cucumber" ]; then
+      local create_rails_app="Y"
+      local create_rails_app_with_cucumber="Y"
+    fi
+  fi
+  if [ "$create_rails_app" = "Y" ]; then
+    if [ "$create_rails_app_with_cucumber" = "Y" ]; then
       rails new $1 -J -T -m http://github.com/willian/rails3-app/raw/master/cuke.rb
     else
-      echo "Usage:";
-      echo "    railsapp <app_name>           ~> will create a rails 3 app without cucumber";
-      echo "    railsapp <app_name> cucumber  ~> will create a rails 3 app with cucumber";
+      rails new $1 -J -T -m http://github.com/willian/rails3-app/raw/master/app.rb
     fi
+    cd $1
+    gem install bundler
+    bundle install
+    bundle lock
+    script/rails generate rspec:install
+    if [ "$create_rails_app_with_cucumber" = "Y" ]; then
+      script/rails generate cucumber:install --rspec --capybara
+    fi
+    script/rails plugin install git://github.com/fnando/rails_tools.git
+    script/rails generate devise:install
   else
     echo "Usage:";
     echo "    railsapp <app_name>           ~> will create a rails 3 app without cucumber";
