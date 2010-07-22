@@ -1,16 +1,9 @@
-export PATH="~/.scripts:/usr/local/ruby/active/bin:$PATH"
-export PATH="/usr/local/bin:/usr/local/sbin:/usr/local/mysql/bin:$PATH"
-export PATH="/usr/local/erlang/bin:/usr/local/couchdb/bin:/usr/local/spidermonkey/bin:$PATH"
-export PATH="/usr/local/erlang/lib/erlang/lib/rabbitmq_server-1.6.0/sbin:$PATH"
-export PATH="/usr/local/prince/bin:/usr/local/redis/bin:/usr/local/rhino:$PATH"
-export PATH="/usr/local/scala/bin/:/usr/local/php/pear/bin:/usr/local/activemq/bin:$PATH"
-export PATH="/usr/local/sphinx/bin:/usr/local/homebrew/bin:$PATH"
-export PATH="/usr/local/mongodb/bin:/usr/local/mtasc:/usr/local/haxe:/usr/local/flex/bin:$PATH"
+export PATH="$HOME/.ruby/active/bin:$HOME/.bin:/usr/local/bin:$PATH"
 export CLASSPATH="/usr/local/rhino:$CLASSPATH"
 export EVENT_NOKQUEUE=1
 export MANPATH=/usr/local/git/man:$MANPATH
-export EDITOR="/usr/bin/mate -wl1"
-export SVN_EDITOR="/usr/bin/mate -wl1"
+export EDITOR="mate -wl1"
+export SVN_EDITOR="mate -wl1"
 export HISTCONTROL=erasedups
 export HISTFILESIZE=100000
 export HISTSIZE=${HISTFILESIZE}
@@ -19,11 +12,25 @@ export GREP_COLOR="4;33"
 export CDPATH=.:~:~/Sites:~/Sites/github
 export CDHISTORY="/tmp/cd-${USER}"
 
+update_gem_path() {
+  local full_ruby_version=$(ruby -e "puts RUBY_VERSION")
+  local partial_ruby_version=`echo $full_ruby_version | sed -E 's/\.[0-9]+$//'`
+  
+  if [ -d "$HOME/.gem/ruby/$full_ruby_version" ]; then
+    ruby_version=$full_ruby_version
+  else
+    ruby_version=$partial_ruby_version
+  fi
+  
+  export GEM_PATH="$GEM_SPACES/active:$GEM_SPACES/$partial_ruby_version/global:$HOME/.gem/ruby/$ruby_version"
+}
+
 export GEM_SPACES="$HOME/.gem/spaces"
 export GEM_HOME="$GEM_SPACES/active"
 export GEM_BIN="$GEM_SPACES/active/bin"
 export GEM_EDITOR="mate"
 export PATH="$GEM_BIN:$PATH"
+update_gem_path
 
 export LESS_TERMCAP_mb=$'\E[04;33m'
 export LESS_TERMCAP_md=$'\E[04;33m'
@@ -57,10 +64,10 @@ source ~/.git_completion.sh
 source ~/.bash_completion.sh
 source ~/.gem_completion.sh
 
-alias cdto="cd `osascript ~/.finder-path.applescript`"
+alias cdto="cd `osascript ~/.finder-path.applescript` &> /dev/null"
 alias redis="redis-server"
 alias growl="growlnotify"
-alias js="java jline.ConsoleRunner org.mozilla.javascript.tools.shell.Main"
+alias js="java org.mozilla.javascript.tools.shell.Main"
 alias ls="ls -G"
 alias ll="ls -Glahs"
 alias psgrep="ps aux | egrep -v egrep | egrep"
@@ -88,9 +95,9 @@ shopt -s dotglob
 shopt -s extglob
 shopt -s progcomp
 set -o ignoreeof
-unset MAILCHECK               # disable "you have mail" warning
-ulimit -S -c 0                # disable core dump
-bind "set completion-ignore-case on"    # ignore case on bash completion
+unset MAILCHECK                           # disable "you have mail" warning
+ulimit -S -c 0                            # disable core dump
+bind "set completion-ignore-case on"      # ignore case on bash completion
 bind "set mark-symlinked-directories on"  # add trailing slash to symlinked directories
 
 # Set window title
@@ -109,63 +116,65 @@ f() {
 reload() { source ~/.bash_profile; }
 
 # list directory after cd; also save the last directory
-# and open it when a new tab is created
+# and open it when a new tab is created.
+# if a file .rubyrc exists, the specified ruby version and 
+# gem space are used.
 cd() {
   builtin cd "${@:-$HOME}" && ls && pwd > $CDHISTORY;
+  
+  if [ -f ".rubyrc" ]; then
+    local config=$(cat .rubyrc)
+    rv `echo $config | sed 's/.*@//'`
+    update_gem_path
+    gem space `echo $config | sed 's/@.*//'`
+  fi
 }
 
 if [ -f $CDHISTORY ]; then
   dir=$(cat $CDHISTORY)
 
   if [ -d "$dir" ]; then
-    builtin cd "$dir" && clear
+    cd "$dir" && clear
   fi
 fi
 
 # Specify which ruby version to use
 # Here's how my ruby is installed:
 #
-#   /usr/local/ruby/1.9.2-rc2
-#   /usr/local/ruby/1.9.2-preview3
-#   /usr/local/ruby/1.9.1-p429
-#   /usr/local/ruby/1.9.1-p243
-#   /usr/local/ruby/1.9.1-p376
-#   /usr/local/ruby/1.8.7-p249
-#   /usr/local/ruby/1.8.7-p299
-#   /usr/local/ruby/1.8.7-p174
-#   /usr/local/ruby/1.8.6-p383
-#   /usr/local/ruby/ree-2010.02
-#   /usr/local/ruby/active
+#   ~/.ruby/1.9.2-rc2
+#   ~/.ruby/1.9.1-p378
+#   ~/.ruby/1.8.7-p299
+#   ~/.ruby/ree-1.8.7-2010.02
+#   ~/.ruby/active
 #
 # The active directory is a symlink to the active
 # ruby version. This is also on the $PATH.
 #
-#   export PATH="/usr/local/ruby/active/ruby:$PATH"
-use_ruby() {
-  local root="/usr/local/ruby"
+#   export PATH="~/.ruby/active/bin:$PATH"
+# 
+rv() {
+  local root="$HOME/.ruby"
   local version="invalid"
 
   if [ "$1" = "192" ]; then
-  version="1.9.2-rc2"
+    version="1.9.2-rc2"
   elif [ "$1" = "191" ]; then
-  version="1.9.1-p243"
+    version="1.9.1-p378"
   elif [ "$1" = "187" ]; then
-  version="1.8.7-p299"
-  elif [ "$1" = "186" ]; then
-  version="1.8.6-p383"
+    version="1.8.7-p299"
   elif [ "$1" = "ree" ]; then
-  version="ree-2010.02"
+    version="ree-1.8.7-2010.02"
   fi
 
   local rubydir="$root/$version"
 
   if [ -d $rubydir ]; then
-  echo "Activating Ruby $version"
-  sudo rm $root/active && sudo ln -s $root/$version $root/active
-  gem space base
+    echo "Activating Ruby $version"
+    rm $root/active && ln -s $root/$version $root/active
+    gem space base
+    update_gem_path
   else
-  echo "Specify a Ruby version: 186, 187, 191, 192, ree"
-  exit 1
+    echo "Specify a Ruby version: 187, 191, 192, ree"
   fi
 }
 
@@ -186,9 +195,6 @@ check_gzip_request() {
   echo -e $message
   return 0
 }
-
-# enter a recently created directory
-mkdir() { /bin/mkdir $@ && eval cd "\$$#"; }
 
 # get the tinyurl
 tinyurl () {
