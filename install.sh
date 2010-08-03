@@ -1,6 +1,7 @@
 cp autotest ~/.autotest
 cp bash_completion.sh ~/.bash_completion.sh
 cp rake_completion.rb ~/.rake_completion.rb
+cp bashrc ~/.bashrc
 cp bash_profile ~/.bash_profile
 cp colors.sh ~/.colors.sh
 cp git_completion.sh ~/.git_completion.sh
@@ -22,5 +23,8 @@ cp sshconfig ~/.ssh/config
 chmod 755 ~/.rake_completion.rb
 
 sudo mkdir -p /etc/bash_completion
+
+sudo wget -O /usr/local/bin/rvm-completion.rb http://github.com/colszowka/rvm-completion/raw/master/lib/rvm-completion.rb
+sudo chmod +x /usr/local/bin/rvm-completion.rb
 
 source ~/.bash_profile
