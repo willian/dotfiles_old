@@ -147,6 +147,9 @@ _gemopencomplete() {
 }
 complete -o default -F _gemopencomplete gem
 
+# rvm-completion
+complete -C /usr/local/bin/rvm-completion.rb -o default rvm
+
 # github repository cloning
 # usage:
 #    github textmate_bundles    ~> will clone $USER repositories
