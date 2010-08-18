@@ -1,4 +1,4 @@
-export PATH="$HOME/.ruby/active/bin:$HOME/.bin:/usr/local/bin:$PATH"
+export PATH="$HOME/.ruby/active/bin:$HOME/.bin:/usr/local/bin:/usr/local/sbin:/usr/local/share/npm/bin:$PATH"
 export CLASSPATH="/usr/local/rhino:$CLASSPATH"
 export EVENT_NOKQUEUE=1
 export MANPATH=/usr/local/git/man:$MANPATH
@@ -15,13 +15,13 @@ export CDHISTORY="/tmp/cd-${USER}"
 update_gem_path() {
   local full_ruby_version=$(ruby -e "puts RUBY_VERSION")
   local partial_ruby_version=`echo $full_ruby_version | sed -E 's/\.[0-9]+$//'`
-  
+
   if [ -d "$HOME/.gem/ruby/$full_ruby_version" ]; then
     ruby_version=$full_ruby_version
   else
     ruby_version=$partial_ruby_version
   fi
-  
+
   export GEM_PATH="$GEM_SPACES/active:$GEM_SPACES/$partial_ruby_version/global:$HOME/.gem/ruby/$ruby_version"
 }
 
@@ -71,7 +71,7 @@ alias js="java org.mozilla.javascript.tools.shell.Main"
 alias ls="ls -G"
 alias ll="ls -Glahs"
 alias psgrep="ps aux | egrep -v egrep | egrep"
-alias showip="curl http://f.simplesideias.com.br/ip.php; ifconfig | grep broadcast | sed 's/.*inet \(.*\) netmask.*/\1/'"
+alias showip="curl http://f.simplesideias.com.br/ip.php; echo; ifconfig | grep broadcast | sed 's/.*inet \(.*\) netmask.*/\1/'"
 alias lock="/System/Library/CoreServices/Menu\ Extras/user.menu/Contents/Resources/CGSession -suspend"
 alias quicksilver="open /Applications/Quicksilver.app"
 alias qs="quicksilver"
@@ -115,34 +115,13 @@ f() {
 # reload source
 reload() { source ~/.bash_profile; }
 
-# list directory after cd; also save the last directory
-# and open it when a new tab is created.
-# if a file .rubyrc exists, the specified ruby version and 
-# gem space are used.
-cd() {
-  builtin cd "${@:-$HOME}" && ls && pwd > $CDHISTORY;
-  
-  if [ -f ".rubyrc" ]; then
-    local config=$(cat .rubyrc)
-    rv `echo $config | sed 's/.*@//'`
-    update_gem_path
-    gem space `echo $config | sed 's/@.*//'`
-  fi
-}
-
-if [ -f $CDHISTORY ]; then
-  dir=$(cat $CDHISTORY)
-
-  if [ -d "$dir" ]; then
-    cd "$dir" && clear
-  fi
-fi
-
 # Specify which ruby version to use
 # Here's how my ruby is installed:
 #
+#   ~/.ruby/1.9.2-p0
 #   ~/.ruby/1.9.2-rc2
 #   ~/.ruby/1.9.1-p378
+#   ~/.ruby/1.8.7-p302
 #   ~/.ruby/1.8.7-p299
 #   ~/.ruby/ree-1.8.7-2010.02
 #   ~/.ruby/active
@@ -151,17 +130,17 @@ fi
 # ruby version. This is also on the $PATH.
 #
 #   export PATH="~/.ruby/active/bin:$PATH"
-# 
+#
 rv() {
   local root="$HOME/.ruby"
   local version="invalid"
 
   if [ "$1" = "192" ]; then
-    version="1.9.2-rc2"
+    version="1.9.2-p0"
   elif [ "$1" = "191" ]; then
     version="1.9.1-p378"
   elif [ "$1" = "187" ]; then
-    version="1.8.7-p299"
+    version="1.8.7-p302"
   elif [ "$1" = "ree" ]; then
     version="ree-1.8.7-2010.02"
   fi
@@ -177,6 +156,30 @@ rv() {
     echo "Specify a Ruby version: 187, 191, 192, ree"
   fi
 }
+
+# list directory after cd; also save the last directory
+# and open it when a new tab is created.
+# if a file .rubyrc exists, the specified ruby version and
+# gem space are used.
+cd() {
+  builtin cd "${@:-$HOME}" && ls && pwd > $CDHISTORY;
+  # builtin cd "${@:-$HOME}" && pwd > $CDHISTORY;
+
+  if [ -f ".rubyrc" ]; then
+    local config=$(cat .rubyrc)
+    rv `echo $config | sed 's/.*@//'`
+    update_gem_path
+    gem space `echo $config | sed 's/@.*//'`
+  fi
+}
+
+if [ -f $CDHISTORY ]; then
+  dir=$(cat $CDHISTORY)
+
+  if [ -d "$dir" ]; then
+    builtin cd "$dir" && clear
+  fi
+fi
 
 check_gzip_request() {
   local r=`curl --write-out "%{size_download}" --output /dev/null --silent $1`
@@ -299,6 +302,9 @@ custom_prompt () {
   else
     PS1="\n${RUBY_PROMPT}${YELLOW}\w\a${NO_COLOR}\n\$ "
   fi
+
+  # screencast
+  # PS1="\n[\u] \w\n\$ "
 }
 
 # taken from http://github.com/bryanl/zshkit/
