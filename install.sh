@@ -10,6 +10,7 @@ cp files/irbrc ~/.irbrc
 cp files/inputrc ~/.inputrc
 cp files/pezrc ~/.pezrc
 cp files/gemrc ~/.gemrc
+cp files/npmrc ~/.npmrc
 cp files/gitignore ~/.gitignore
 
 mkdir ~/.bin

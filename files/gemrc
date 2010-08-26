@@ -4,7 +4,6 @@
 gem: --no-rdoc --no-ri
 :sources:
 - http://gemcutter.org
-gemcutter_key: e7e2dc06a923c83911c1935ae689be85
 :backtrace: false
 :bulk_threshold: 1000
 :benchmark: false
