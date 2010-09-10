@@ -8,11 +8,10 @@ cp files/git_completion.sh ~/.git_completion.sh
 cp files/gitconfig ~/.gitconfig
 cp files/irbrc ~/.irbrc
 cp files/inputrc ~/.inputrc
-cp files/pezrc ~/.pezrc
 cp files/gemrc ~/.gemrc
 cp files/npmrc ~/.npmrc
-cp files/gitignore ~/.gitignore
 cp files/rvmrc ~/.rvmrc
+cp files/gitignore ~/.gitignore
 
 mkdir ~/.bin
 cp files/grabbit ~/.bin
