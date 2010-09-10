@@ -1,4 +1,4 @@
-export PATH="$HOME/.ruby/active/bin:$HOME/.bin:/usr/local/bin:/usr/local/sbin:/usr/local/share/npm/bin:$PATH"
+export PATH="$HOME/.bin:$HOME/.local/bin:$HOME/.local/flex4/bin:/usr/local/bin:/usr/local/sbin:/usr/local/share/npm/bin:$PATH"
 export CLASSPATH="/usr/local/rhino:$CLASSPATH"
 export NODE_PATH="$HOME/.npm"
 export EVENT_NOKQUEUE=1
@@ -12,26 +12,6 @@ export GREP_OPTIONS="--color=auto"
 export GREP_COLOR="4;33"
 export CDPATH=.:~:~/Sites:~/Sites/github
 export CDHISTORY="/tmp/cd-${USER}"
-
-update_gem_path() {
-  local full_ruby_version=$(ruby -e "puts RUBY_VERSION")
-  local partial_ruby_version=`echo $full_ruby_version | sed -E 's/\.[0-9]+$//'`
-
-  if [ -d "$HOME/.gem/ruby/$full_ruby_version" ]; then
-    ruby_version=$full_ruby_version
-  else
-    ruby_version=$partial_ruby_version
-  fi
-
-  export GEM_PATH="$GEM_SPACES/active:$GEM_SPACES/$partial_ruby_version/global:$HOME/.gem/ruby/$ruby_version"
-}
-
-export GEM_SPACES="$HOME/.gem/spaces"
-export GEM_HOME="$GEM_SPACES/active"
-export GEM_BIN="$GEM_SPACES/active/bin"
-export GEM_EDITOR="mate"
-export PATH="$GEM_BIN:$PATH"
-update_gem_path
 
 export LESS_TERMCAP_mb=$'\E[04;33m'
 export LESS_TERMCAP_md=$'\E[04;33m'
@@ -116,61 +96,13 @@ f() {
 # reload source
 reload() { source ~/.bash_profile; }
 
-# Specify which ruby version to use
-# Here's how my ruby is installed:
-#
-#   ~/.ruby/1.9.2-p0
-#   ~/.ruby/1.9.2-rc2
-#   ~/.ruby/1.9.1-p378
-#   ~/.ruby/1.8.7-p302
-#   ~/.ruby/1.8.7-p299
-#   ~/.ruby/ree-1.8.7-2010.02
-#   ~/.ruby/active
-#
-# The active directory is a symlink to the active
-# ruby version. This is also on the $PATH.
-#
-#   export PATH="~/.ruby/active/bin:$PATH"
-#
-rv() {
-  local root="$HOME/.ruby"
-  local version="invalid"
-
-  if [ "$1" = "192" ]; then
-    version="1.9.2-p0"
-  elif [ "$1" = "191" ]; then
-    version="1.9.1-p378"
-  elif [ "$1" = "187" ]; then
-    version="1.8.7-p302"
-  elif [ "$1" = "ree" ]; then
-    version="ree-1.8.7-2010.02"
-  fi
-
-  local rubydir="$root/$version"
-
-  if [ -d $rubydir ]; then
-    echo "Activating Ruby $version"
-    rm $root/active && ln -s $root/$version $root/active
-    gem space base
-    update_gem_path
-  else
-    echo "Specify a Ruby version: 187, 191, 192, ree"
-  fi
-}
-
 # list directory after cd; also save the last directory
 # and open it when a new tab is created.
-# if a file .rubyrc exists, the specified ruby version and
-# gem space are used.
 cd() {
   builtin cd "${@:-$HOME}" && ls && pwd > $CDHISTORY;
-  # builtin cd "${@:-$HOME}" && pwd > $CDHISTORY;
 
-  if [ -f ".rubyrc" ]; then
-    local config=$(cat .rubyrc)
-    rv `echo $config | sed 's/.*@//'`
-    update_gem_path
-    gem space `echo $config | sed 's/@.*//'`
+  if [ -f .rvmrc ]; then
+    __rvm_project_rvmrc
   fi
 }
 
@@ -245,7 +177,7 @@ custom_prompt () {
   fi
 
   local RUBY_VERSION=`ruby -e "puts RUBY_VERSION"`
-  local GEM_SPACE=`gem space 2> /dev/null | grep \* | sed 's/* //'`
+  local GEMSET_NAME=`rvm gemset name`
   local RAILS_VERSION=`rails -v 2> /dev/null | sed 's/Rails //'`
   local RAILS_PROMPT=""
   local RUBY_PROMPT=""
@@ -265,8 +197,8 @@ custom_prompt () {
     RAILS_PROMPT="${RAILS_VERSION}@"
   fi
 
-  if [[ "$GEM_SPACE" != "" ]]; then
-    RUBY_PROMPT="${GRAY}[${RAILS_PROMPT}${GEM_SPACE}#${RUBY_VERSION}]${NO_COLOR} "
+  if [[ "$GEMSET_NAME" != "" ]]; then
+    RUBY_PROMPT="${GRAY}[${RAILS_PROMPT}${GEMSET_NAME}#${RUBY_VERSION}]${NO_COLOR} "
   else
     RUBY_PROMPT="${GRAY}[${RAILS_PROMPT}${RUBY_VERSION}]${NO_COLOR} "
   fi
@@ -303,9 +235,6 @@ custom_prompt () {
   else
     PS1="\n${RUBY_PROMPT}${YELLOW}\w\a${NO_COLOR}\n\$ "
   fi
-
-  # screencast
-  # PS1="\n[\u] \w\n\$ "
 }
 
 # taken from http://github.com/bryanl/zshkit/
@@ -321,3 +250,6 @@ git-scoreboard () { git log | grep '^Author' | sort | uniq -ci | sort -r; }
 manp () { man -t $* | ps2pdf - - | open -f -a Preview; }
 
 PROMPT_COMMAND=custom_prompt
+
+# Activate RVM
+[[ -s $HOME/.rvm/scripts/rvm ]] && source $HOME/.rvm/scripts/rvm

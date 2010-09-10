@@ -12,6 +12,7 @@ cp files/pezrc ~/.pezrc
 cp files/gemrc ~/.gemrc
 cp files/npmrc ~/.npmrc
 cp files/gitignore ~/.gitignore
+cp files/rvmrc ~/.rvmrc
 
 mkdir ~/.bin
 cp files/grabbit ~/.bin
