@@ -71,7 +71,7 @@ if [[ -s $HOME/.rvm/scripts/rvm ]] ; then source $HOME/.rvm/scripts/rvm ; fi
 # Usage: railsapp my_app
 #        railsapp my_app mysql
 railsapp() {
-	local template_path="/Users/willian/GitHub/rails3-app/app.rb"
+	local template_path="$HOME/GitHub/rails3-app/app.rb"
   if [ $# = 1 ]; then
     rails new $1 -J -T -m $template_path
   elif [ $# = 2 ]; then
