@@ -71,11 +71,11 @@ if [[ -s $HOME/.rvm/scripts/rvm ]] ; then source $HOME/.rvm/scripts/rvm ; fi
 # Usage: railsapp my_app
 #        railsapp my_app mysql
 railsapp() {
-	local git_url="https://github.com/willian/rails3-app/raw/master/app.rb"
+	local template_path="/Users/willian/GitHub/rails3-app/app.rb"
   if [ $# = 1 ]; then
-    rails new $1 -J -T -m $git_url
+    rails new $1 -J -T -m $template_path
   elif [ $# = 2 ]; then
-    rails new $1 -J -T -d $2 -m $git_url
+    rails new $1 -J -T -d $2 -m $template_path
   else
     echo "Usage:";
     echo "    railsapp <app_name>         ~> will create a rails 3 app and don't will use mysql";
