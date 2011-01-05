@@ -24,7 +24,7 @@ chmod 755 ~/.rake_completion.rb
 
 sudo mkdir -p /etc/bash_completion
 
-sudo wget -O /usr/local/bin/rvm-completion.rb http://github.com/colszowka/rvm-completion/raw/master/lib/rvm-completion.rb
+sudo wget --no-check-certificate -O /usr/local/bin/rvm-completion.rb https://github.com/colszowka/rvm-completion/raw/master/lib/rvm-completion.rb
 sudo chmod +x /usr/local/bin/rvm-completion.rb
 
 source ~/.bash_profile

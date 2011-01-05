@@ -243,7 +243,7 @@ git-new-branch() {
   fi
 }
 
-# taken from http://github.com/bryanl/zshkit/
+# taken from https://github.com/bryanl/zshkit/
 git-track () {
   local BRANCH=`git branch 2> /dev/null | grep \* | sed 's/* //'`
   git config branch.$BRANCH.remote origin
