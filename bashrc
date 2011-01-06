@@ -54,8 +54,8 @@ alias pg_stop="pg_ctl -D /usr/local/var/postgres stop -s -m fast"
 alias gvim='mvim -go'
 alias rvim='mvim --remote'
 alias tvim='mvim --remote-tab'
-alias rails_db_reset="rake db:drop && rake db:create && rake db:migrate"
-alias twiki="rake db:migrate && rake db:migrate:redo && rake db:test:prepare"
+alias twiki="rake db:migrate && rake db:test:prepare"
+alias memcached_start="/usr/local/bin/memcached"
 
 shopt -s cdspell
 shopt -s nocaseglob
