@@ -13,12 +13,13 @@ cp files/npmrc ~/.npmrc
 cp files/rvmrc ~/.rvmrc
 cp files/gitignore ~/.gitignore
 
-mkdir ~/.bin
-cp files/grabbit ~/.bin
-chmod +x ~/.bin/grabbit
+mkdir ~/bin
+cp files/{grabbit,lyrics} ~/bin
+chmod +x ~/bin/grabbit
+chmod +x ~/bin/lyrics
 
 curl http://github.com/paulhammond/webkit2png/raw/master/webkit2png > ~/.bin/webkit2png
-chmod +x ~/.bin/webkit2png
+chmod +x ~/bin/webkit2png
 
 mkdir -p ~/.ssh
 cp files/sshconfig ~/.ssh/config

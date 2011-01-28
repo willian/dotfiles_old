@@ -1,10 +1,9 @@
-export PATH="$HOME/.bin:$HOME/.local/bin:$HOME/.local/flex4/bin:/usr/local/bin:/usr/local/sbin:/usr/local/share/npm/bin:$PATH"
+export PATH="$HOME/bin:$HOME/local/bin:$HOME/local/flex4/bin:$HOME/Sites/github/git-achievements:/usr/local/bin:/usr/local/sbin:/usr/local/share/npm/bin:$PATH"
 export CLASSPATH="/usr/local/rhino:$CLASSPATH"
-export NODE_PATH="$HOME/.npm"
 export EVENT_NOKQUEUE=1
 export MANPATH=/usr/local/git/man:$MANPATH
-export EDITOR="mate -wl1"
-export SVN_EDITOR="mate -wl1"
+export EDITOR="/usr/bin/mate -w"
+export SVN_EDITOR="/usr/bin/mate -w"
 export HISTCONTROL=erasedups
 export HISTFILESIZE=100000
 export HISTSIZE=${HISTFILESIZE}
@@ -12,6 +11,9 @@ export GREP_OPTIONS="--color=auto"
 export GREP_COLOR="4;33"
 export CDPATH=.:~:~/Sites:~/Sites/github
 export CDHISTORY="/tmp/cd-${USER}"
+
+# Activate RVM
+[[ -s $HOME/.rvm/scripts/rvm ]] && source $HOME/.rvm/scripts/rvm
 
 export LESS_TERMCAP_mb=$'\E[04;33m'
 export LESS_TERMCAP_md=$'\E[04;33m'
@@ -48,12 +50,13 @@ source ~/.gem_completion.sh
 alias cdto="cd `osascript ~/.finder-path.applescript` &> /dev/null"
 alias redis="redis-server"
 alias growl="growlnotify"
-alias js="java org.mozilla.javascript.tools.shell.Main"
+alias js="java -jar $HOME/Library/Java/Extensions/js.jar -opt -1"
 alias ls="ls -G"
 alias ll="ls -Glahs"
+alias rspec="rspec -c"
 alias psgrep="ps aux | egrep -v egrep | egrep"
 alias showip="curl http://f.simplesideias.com.br/ip.php; echo; ifconfig | grep broadcast | sed 's/.*inet \(.*\) netmask.*/\1/'"
-alias lock="/System/Library/CoreServices/Menu\ Extras/user.menu/Contents/Resources/CGSession -suspend"
+alias lock="open /System/Library/Frameworks/ScreenSaver.framework/Versions/A/Resources/ScreenSaverEngine.app"
 alias quicksilver="open /Applications/Quicksilver.app"
 alias qs="quicksilver"
 alias top="top -o cpu"
@@ -68,6 +71,16 @@ alias xmlput="curl -X PUT -H 'Accept: application/xml'"
 alias xmldelete="curl -X DELETE -H 'Accept: application/xml'"
 alias r="rails"
 alias tunnel="sudo ssh -vND localhost:666 fnando@simplesideias.com.br"
+alias rgc="rvm gemset create"
+alias rgu="rvm gemset use"
+alias autotest="RUBYLIB='.' autotest"
+alias macirb="macirb --simple-prompt -f"
+alias newgem="thor gem"
+
+rg() {
+  rvm gemset create $1 &> /dev/null
+  rvm gemset use $1
+}
 
 shopt -s cdspell
 shopt -s nocaseglob
@@ -110,7 +123,7 @@ if [ -f $CDHISTORY ]; then
   dir=$(cat $CDHISTORY)
 
   if [ -d "$dir" ]; then
-    builtin cd "$dir" && clear
+    cd "$dir" && clear
   fi
 fi
 
@@ -250,6 +263,3 @@ git-scoreboard () { git log | grep '^Author' | sort | uniq -ci | sort -r; }
 manp () { man -t $* | ps2pdf - - | open -f -a Preview; }
 
 PROMPT_COMMAND=custom_prompt
-
-# Activate RVM
-[[ -s $HOME/.rvm/scripts/rvm ]] && source $HOME/.rvm/scripts/rvm
