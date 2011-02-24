@@ -9,7 +9,6 @@ cp gem_completion.sh ~/.gem_completion.sh
 cp gitconfig ~/.gitconfig
 cp irbrc ~/.irbrc
 cp inputrc ~/.inputrc
-cp pezrc ~/.pezrc
 cp gemrc ~/.gemrc
 cp gitignore ~/.gitignore
 cp caprc ~/.caprc
