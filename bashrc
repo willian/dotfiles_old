@@ -54,8 +54,9 @@ alias pg_stop="pg_ctl -D /usr/local/var/postgres stop -s -m fast"
 alias gvim='mvim -go'
 alias rvim='mvim --remote'
 alias tvim='mvim --remote-tab'
-alias twiki="rake db:migrate && rake db:test:prepare"
-alias memcached_start="/usr/local/bin/memcached"
+alias vim='/usr/local/Cellar/macvim/v7.3-53/MacVim.app/Contents/MacOS/Vim'
+alias rails_db_reset="rake db:drop && rake db:create && rake db:migrate"
+alias twiki="rake db:migrate && rake db:migrate:redo && rake db:test:prepare"
 
 shopt -s cdspell
 shopt -s nocaseglob
@@ -67,6 +68,9 @@ unset MAILCHECK
 
 # Load RVM scripts
 if [[ -s $HOME/.rvm/scripts/rvm ]] ; then source $HOME/.rvm/scripts/rvm ; fi
+
+# Activate NVM
+. ~/.nvm/nvm.sh
 
 # Usage: railsapp my_app
 #        railsapp my_app mysql
