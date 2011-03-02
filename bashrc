@@ -1,4 +1,4 @@
-export PATH="/usr/local/bin:/usr/local/sbin:/usr/local/mysql/bin:/usr/local/mongodb/bin:$PATH"
+export PATH="/usr/local/bin:/usr/local/sbin:/usr/local/mysql/bin:/usr/local/mongodb/bin:$HOME/.nvm/v0.4.1/bin:$PATH"
 export EVENT_NOKQUEUE=1
 export MANPATH=/usr/local/git/man:$MANPATH
 export EDITOR="vim"
@@ -70,7 +70,7 @@ unset MAILCHECK
 if [[ -s $HOME/.rvm/scripts/rvm ]] ; then source $HOME/.rvm/scripts/rvm ; fi
 
 # Activate NVM
-. ~/.nvm/nvm.sh
+. $HOME/.nvm/nvm.sh
 
 # Usage: railsapp my_app
 #        railsapp my_app mysql
