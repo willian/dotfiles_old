@@ -7,8 +7,4 @@ gem: --no-rdoc --no-ri
 :verbose: true
 :sources:
 - http://gemcutter.org
-- http://gems.rubyforge.org/
-- http://gems.github.com/
-- http://gems.datamapper.org
-- http://gems.opscode.com
 update: --env-shebang
