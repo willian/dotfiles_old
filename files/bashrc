@@ -38,7 +38,6 @@ source ~/.git_completion.sh
 source ~/.bash_completion.sh
 source ~/.gem_completion.sh
 
-alias cdto="cd `osascript ~/.finder-path.applescript` &> /dev/null"
 alias redis="redis-server"
 alias growl="growlnotify"
 alias js="java -jar $HOME/Library/Java/Extensions/js.jar -opt -1"

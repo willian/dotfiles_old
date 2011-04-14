@@ -3,7 +3,6 @@ cp files/bash_completion.sh ~/.bash_completion.sh
 cp files/bash_profile ~/.bash_profile
 cp files/bashrc ~/.bashrc
 cp files/caprc ~/.caprc
-cp files/finder-path.applescript ~/.finder-path.applescript
 cp files/gem_completion.sh ~/.gem_completion.sh
 cp files/git_completion.sh ~/.git_completion.sh
 cp files/gitconfig ~/.gitconfig
