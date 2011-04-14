@@ -1,6 +1,6 @@
 unless defined?(RUBY_ENGINE) && RUBY_ENGINE == "macruby"
   begin
-    gems = %w(rubygems irb/completion irb/ext/save-history ap ruby-debug)
+    gems = %w(rubygems irb/completion ap)
 
     gems.each do |gem_name|
       begin
@@ -9,8 +9,14 @@ unless defined?(RUBY_ENGINE) && RUBY_ENGINE == "macruby"
       end
     end
 
+    require "ruby-debug"
+    # if RUBY_VERSION < "1.9"
+      # require "ruby-debug"
+    # else
+      # require "ruby-debug19"
+    # end
+
     # Load some libraries
-    require "active_record" unless defined?(ActiveRecord)
     require "active_support/all" unless defined?(ActiveSupport)
     require "date"
     require "time"
@@ -43,11 +49,6 @@ unless defined?(RUBY_ENGINE) && RUBY_ENGINE == "macruby"
         file.puts(lines)
         file.flock(File::LOCK_UN)
       end
-    end
-
-    if ENV.include?("RAILS_ENV") && !defined?(RAILS_DEFAULT_LOGGER)
-      require "logger"
-      RAILS_DEFAULT_LOGGER = Logger.new(STDOUT)
     end
 
     IRB::Irb.class_eval do

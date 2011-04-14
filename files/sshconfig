@@ -1,0 +1,15 @@
+Host willian
+	User willian
+	HostName willianfernandes.com.br
+
+Host ikwa
+	User ikwa
+	HostName 173.255.192.130
+
+Host ultracursos
+	User ultracursos
+	HostName 173.255.204.63
+
+Host bui
+	User bui
+	HostName 173.255.193.115

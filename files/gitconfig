@@ -1,29 +1,24 @@
 [user]
 	name = Willian Fernandes
 	email = willian@willianfernandes.com.br
-[github]
-	user = willian
-	token = *******
+	[github]
+		user = willian
+		token = *******
 [color]
 	diff = auto
 	status = auto
 	branch = auto
-	interactive = auto
 	ui = true
-[core]
-	excludesfile = /Users/willian/.gitignore
-	editor = mate -wl1
 [alias]
 	sh = !git-sh
 	ci = commit
 	co = checkout
-	br = branch
+	b = branch
 	st = status
 	who = shortlog -s --
 	fl = log -p
-[merge]
-	tool = changes
+[core]
+	editor = mate -wl1
+	excludefile = /Users/willian/.gitignore
 [help]
 	autocorrect = 1
-[url "git@willianfernandes.com.br:"]
-	insteadOf = projects:

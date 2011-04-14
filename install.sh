@@ -1,29 +1,35 @@
-cp autotest ~/.autotest
-cp bash_completion.sh ~/.bash_completion.sh
-cp rake_completion.rb ~/.rake_completion.rb
-cp bashrc ~/.bashrc
-cp bash_profile ~/.bash_profile
-cp colors.sh ~/.colors.sh
-cp git_completion.sh ~/.git_completion.sh
-cp gem_completion.sh ~/.gem_completion.sh
-cp gitconfig ~/.gitconfig
-cp irbrc ~/.irbrc
-cp inputrc ~/.inputrc
-cp gemrc ~/.gemrc
-cp gitignore ~/.gitignore
-cp caprc ~/.caprc
+cp files/autotest ~/.autotest
+cp files/bash_completion.sh ~/.bash_completion.sh
+cp files/bash_profile ~/.bash_profile
+cp files/bashrc ~/.bashrc
+cp files/caprc ~/.caprc
+cp files/finder-path.applescript ~/.finder-path.applescript
+cp files/gem_completion.sh ~/.gem_completion.sh
+cp files/git_completion.sh ~/.git_completion.sh
+cp files/gitconfig ~/.gitconfig
+cp files/irbrc ~/.irbrc
+cp files/inputrc ~/.inputrc
+cp files/gemrc ~/.gemrc
+cp files/npmrc ~/.npmrc
+cp files/rvmrc ~/.rvmrc
+cp files/gitignore ~/.gitignore
 
-sudo cp grabbit /usr/local/bin
-sudo chmod +x /usr/local/bin/grabbit
+mkdir ~/bin
+cp files/{grabbit,lyrics} ~/bin
+chmod +x ~/bin/grabbit
+chmod +x ~/bin/lyrics
+
+curl http://github.com/paulhammond/webkit2png/raw/master/webkit2png > ~/bin/webkit2png
+chmod +x ~/bin/webkit2png
 
 mkdir -p ~/.ssh
-cp sshconfig ~/.ssh/config
-
-chmod 755 ~/.rake_completion.rb
+cp files/sshconfig ~/.ssh/config
 
 sudo mkdir -p /etc/bash_completion
 
-sudo wget --no-check-certificate -O /usr/local/bin/rvm-completion.rb https://github.com/colszowka/rvm-completion/raw/master/lib/rvm-completion.rb
-sudo chmod +x /usr/local/bin/rvm-completion.rb
-
 source ~/.bash_profile
+
+defaults write com.apple.finder _FXShowPosixPathInTitle -bool YES
+defaults write -g PMPrintingExpandedStateForPrint -bool TRUE
+
+open files/Terminal/IR_Black.terminal

@@ -7,3 +7,6 @@ db/schema.rb
 *.pyc
 .*.swp
 .swp
+pkg
+tmp
+coverage
