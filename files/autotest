@@ -1,2 +1,1 @@
-require "test_notifier/autotest"
-require "autotest/timestamp"
+require "autotest/fsevent"

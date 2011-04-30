@@ -1,3 +1,0 @@
-# create a symlink to the current rvm installation.
-rm "$rvm_rubies_path/active" &> /dev/null
-ln -s "$rvm_ruby_home" "$rvm_rubies_path/active"

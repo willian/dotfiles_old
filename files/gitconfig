@@ -14,8 +14,17 @@
 	st = status
 	who = shortlog -s --
 	fl = log -p
+	lg = log --oneline --decorate
+	sb = status -sb
+	dw = diff --word-diff
 [core]
 	editor = mate -wl1
 	excludefile = /Users/fnando/.gitignore
 [help]
 	autocorrect = 1
+[achievement]
+	upload = true
+[branch]
+	autosetuprebase = always
+[push]
+	default = current
