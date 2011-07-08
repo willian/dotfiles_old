@@ -20,7 +20,7 @@
 	status = auto
 	ui = true
 [core]
-	editor = mvim
+	editor = vim
 	excludefile = /Users/willian/.gitignore
 	whitespace = warn
 [github]
