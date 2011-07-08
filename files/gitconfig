@@ -1,24 +1,46 @@
-[user]
-	name = Willian Fernandes
-	email = willian@willianfernandes.com.br
-	[github]
-		user = willian
-		token = *******
-[color]
-	diff = auto
-	status = auto
-	branch = auto
-	ui = true
 [alias]
-	sh = !git-sh
+	br = branch
 	ci = commit
 	co = checkout
-	b = branch
-	st = status
-	who = shortlog -s --
+	cp = cherry-pick
 	fl = log -p
+	pruneremote = remote prune origin
+	put = push origin HEAD
+	ri = rebase --interactive
+	sh = !git-sh
+	st = status
+	tr = log --graph --oneline --decorate --color
+	tree = log --graph --oneline --decorate --color --all
+	who = shortlog -s --
+[branch]
+	autosetuprebase = always
+[color]
+	branch = auto
+	diff = auto
+	status = auto
+	ui = true
 [core]
-	editor = mate -wl1
+	editor = mvim
 	excludefile = /Users/willian/.gitignore
+	whitespace = warn
+[github]
+	user = willian
+	token = ******
 [help]
-	autocorrect = 1
+	autocorrect = 10
+[merge]
+	summary = true
+[merge "bundlelock"]
+	name = lock Gemfile
+	driver = bundle install
+[merge "bundle"]
+	name = bundle
+	driver = bundle
+[push]
+	default = tracking
+[rebase]
+	autosquash = true
+[user]
+	email = willian@willianfernandes.com.br
+	name = Willian Fernandes
+
