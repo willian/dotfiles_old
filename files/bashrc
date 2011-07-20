@@ -41,7 +41,7 @@ source ~/.git_completion.sh
 source ~/.bash_completion.sh
 source ~/.gem_completion.sh
 
-alias redis="redis-server"
+alias redis="redis-server /usr/local/etc/redis.conf"
 alias growl="growlnotify"
 alias js="java -jar $HOME/Library/Java/Extensions/js.jar -opt -1"
 alias ls="ls -G"
