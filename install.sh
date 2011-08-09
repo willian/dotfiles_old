@@ -4,14 +4,15 @@ cp files/bash_profile ~/.bash_profile
 cp files/bashrc ~/.bashrc
 cp files/caprc ~/.caprc
 cp files/gem_completion.sh ~/.gem_completion.sh
+cp files/gemrc ~/.gemrc
 cp files/git_completion.sh ~/.git_completion.sh
 cp files/gitconfig ~/.gitconfig
-cp files/irbrc ~/.irbrc
-cp files/inputrc ~/.inputrc
-cp files/gemrc ~/.gemrc
-cp files/npmrc ~/.npmrc
-cp files/rvmrc ~/.rvmrc
 cp files/gitignore ~/.gitignore
+cp files/inputrc ~/.inputrc
+cp files/irbrc ~/.irbrc
+cp files/npmrc ~/.npmrc
+cp files/rdebugrc ~/.rdebugrc
+cp files/rvmrc ~/.rvmrc
 
 mkdir ~/bin
 cp files/{grabbit,lyrics} ~/bin
