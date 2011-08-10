@@ -195,9 +195,14 @@ custom_prompt () {
     BRANCH=`git status 2> /dev/null | grep "On branch" | sed 's/# On branch //'`
   fi
 
+  if [ -f "Gemfile.lock" ]; then
+    local RAILS_VERSION=`cat Gemfile.lock | grep  \ \ \ \ \rails\ \(3 | sed 's/^    rails (\(.*\))/\1/'`
+    if [[ "$RAILS_VERSION" = "" ]]; then
+      RAILS_VERSION=`cat Gemfile.lock | grep  \ \ \ \ \rails\ \(2 | sed 's/^    rails (\(.*\))/\1/'`
+    fi
+  fi
+
   local RUBY_VERSION=`ruby -e "puts RUBY_VERSION"`
-  local GEMSET_NAME=`rvm gemset name`
-  local RAILS_VERSION=`rails -v 2> /dev/null | sed 's/Rails //'`
   local RAILS_PROMPT=""
   local RUBY_PROMPT=""
   local STATUS=`git status 2>/dev/null`
@@ -213,14 +218,10 @@ custom_prompt () {
   local LOG=`git log -1 2> /dev/null`
 
   if [[ "$RAILS_VERSION" != "" ]]; then
-    RAILS_PROMPT="${RAILS_VERSION}@"
+    RAILS_PROMPT="${RAILS_VERSION}#"
   fi
 
-  if [[ "$GEMSET_NAME" != "" ]]; then
-    RUBY_PROMPT="${LIGHT_GRAY}(${RAILS_PROMPT}${GEMSET_NAME}#${RUBY_VERSION})${NO_COLOR} "
-  else
-    RUBY_PROMPT="${LIGHT_GRAY}(${RAILS_PROMPT}${RUBY_VERSION})${NO_COLOR} "
-  fi
+  RUBY_PROMPT="${LIGHT_GRAY}(${RAILS_PROMPT}${RUBY_VERSION})${NO_COLOR} "
 
   if [ "$STATUS" != "" ]; then
     if [[ "$STATUS" =~ "$NOTHING_TO_COMMIT" ]]; then
