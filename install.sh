@@ -1,4 +1,3 @@
-cp files/autotest ~/.autotest
 cp files/bash_profile ~/.bash_profile
 cp files/caprc ~/.caprc
 cp files/gitconfig ~/.gitconfig

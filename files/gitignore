@@ -6,3 +6,4 @@ db/schema.rb
 pkg
 tmp
 coverage
+*.log
