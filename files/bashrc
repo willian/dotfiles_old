@@ -96,8 +96,10 @@ railsapp() {
   local template_path="https://raw.github.com/willian/rails-app-template/master/app.rb"
   if [ $# = 1 ]; then
     rails new $1 -T -m $template_path
+    cd $1
   elif [ $# = 2 ]; then
     rails new $1 -T -d $2 -m $template_path
+    cd $1
   else
     echo "Usage:";
     echo "    railsapp <app_name>         ~> will create a rails 3 app and don't will use mysql";
