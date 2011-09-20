@@ -68,6 +68,7 @@ alias tvim='mvim --remote-tab'
 alias vim="/Applications/MacVim.app/Contents/MacOS/Vim"
 alias rails_db_reset="rake db:drop && rake db:create && rake db:migrate && rake db:test:prepare"
 alias twiki="rake db:migrate && rake db:migrate:redo && rake db:test:prepare"
+alias memcached="/usr/local/bin/memcached"
 
 rg() {
   rvm gemset create $1 &> /dev/null
