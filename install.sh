@@ -5,7 +5,7 @@ cp files/irbrc ~/.irbrc
 cp files/inputrc ~/.inputrc
 cp files/gemrc ~/.gemrc
 cp files/npmrc ~/.npmrc
-cp files/rvmrc ~/.rvmrc
+cp files/rvmrc ~/.pryrc
 cp files/gitignore ~/.gitignore
 
 mkdir ~/bin
