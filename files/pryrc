@@ -1,5 +1,15 @@
 Pry.config.editor = "mate -w"
 
+prompt = "\e[1;30m"
+prompt << "#{Rails.version}@" if defined?(Rails)
+prompt << "#{RUBY_VERSION}"
+Pry.config.prompt = proc {|obj, nest_level, _| "#{prompt} (#{obj})>\e[0m "}
+
+Pry.config.exception_handler = proc do |output, exception, _|
+  output.puts "\e[31m#{exception.class}: #{exception.message}"
+  output.puts "from #{exception.backtrace.first}\e[0m"
+end
+
 begin
   require "awesome_print"
   Pry.config.print = proc {|output, value| Pry::Helpers::BaseHelpers.stagger_output("=> #{value.ai}", output)}
