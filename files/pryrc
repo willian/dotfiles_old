@@ -1,0 +1,8 @@
+Pry.config.editor = "mate -w"
+
+begin
+  require "awesome_print"
+  Pry.config.print = proc {|output, value| Pry::Helpers::BaseHelpers.stagger_output("=> #{value.ai}", output)}
+rescue LoadError => err
+   puts "=> Unable to load awesome_print"
+end

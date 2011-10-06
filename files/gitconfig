@@ -19,11 +19,9 @@
 	dw = diff --word-diff
 [core]
 	editor = mate -wl1
-	excludefile = /Users/fnando/.gitignore
+	excludesfile = /Users/fnando/.gitignore
 [help]
 	autocorrect = 1
-[achievement]
-	upload = true
 [branch]
 	autosetuprebase = always
 [push]
