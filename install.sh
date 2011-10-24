@@ -10,7 +10,7 @@ cp files/gitignore ~/.gitignore
 
 mkdir ~/bin
 
-curl http://github.com/paulhammond/webkit2png/raw/master/webkit2png > ~/.bash/bin/webkit2png
+curl https://raw.github.com/paulhammond/webkit2png/master/webkit2png > ~/.bash/bin/webkit2png
 chmod +x ~/.bash/bin/webkit2png
 
 mkdir -p ~/.ssh
