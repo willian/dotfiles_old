@@ -5,10 +5,10 @@ cp files/irbrc ~/.irbrc
 cp files/inputrc ~/.inputrc
 cp files/gemrc ~/.gemrc
 cp files/npmrc ~/.npmrc
-cp files/rvmrc ~/.pryrc
+cp files/pryrc ~/.pryrc
 cp files/gitignore ~/.gitignore
 
-mkdir ~/bin
+mkdir -p ~/bin
 
 curl https://raw.github.com/paulhammond/webkit2png/master/webkit2png > ~/.bash/bin/webkit2png
 chmod +x ~/.bash/bin/webkit2png
