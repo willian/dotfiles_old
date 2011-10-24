@@ -1,1 +1,2 @@
-source $HOME/.bashrc
+# Clone http://github.com/willian/bash to ~/.bash
+source $HOME/.bash/init.sh

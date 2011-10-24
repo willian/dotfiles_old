@@ -1,17 +1,14 @@
 [alias]
-	br = branch
+	sh = !git-sh
 	ci = commit
 	co = checkout
-	cp = cherry-pick
-	fl = log -p
-	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
-	pruneremote = remote prune origin
-	put = push origin HEAD
-	ri = rebase --interactive
-	sh = !git-sh
+	b = branch
 	st = status
-	tr = log --graph --oneline --decorate --color
-	tree = log --graph --oneline --decorate --color --all
+	who = shortlog -s --
+	fl = log -p
+	lg = log --oneline --decorate
+	sb = status -sb
+	dw = diff --word-diff
 	who = shortlog -s --
 [branch]
 	autosetuprebase = always
@@ -21,27 +18,15 @@
 	status = auto
 	ui = true
 [core]
-	editor = vim
+	editor = mate -wl1
 	excludefile = /Users/willian/.gitignore
-	whitespace = warn
 [github]
 	user = willian
 	token = ******
 [help]
-	autocorrect = 10
-[merge]
-	summary = true
-[merge "bundlelock"]
-	name = lock Gemfile
-	driver = bundle install
-[merge "bundle"]
-	name = bundle
-	driver = bundle
+	autocorrect = 1
 [push]
-	default = tracking
-[rebase]
-	autosquash = true
+	default = current
 [user]
 	email = willian@willianfernandes.com.br
 	name = Willian Fernandes
-

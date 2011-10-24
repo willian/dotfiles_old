@@ -1,15 +1,26 @@
+Host *
+  ForwardAgent yes
+
 Host willian
-	User willian
-	HostName willianfernandes.com.br
+  User willian
+  HostName willianfernandes.com.br
 
 Host ikwa
-	User ikwa
-	HostName 173.255.192.130
+  User ikwa
+  HostName 173.255.192.130
 
 Host ultracursos
-	User ultracursos
-	HostName 173.255.204.63
+  User ultracursos
+  HostName 173.255.204.63
 
-Host bui
-	User bui
-	HostName 173.255.193.115
+Host ultracursos_bui
+  User bui
+  HostName 173.255.193.115
+
+Host buzzero_app
+  User buzzero
+  HostName 50.97.198.178
+
+Host buzzero_db
+  User buzzero
+  HostName 50.97.198.179
