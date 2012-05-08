@@ -16,6 +16,8 @@ if defined?(Rails)
   begin
     require "rails/console/app"
     require "rails/console/helpers"
+
+    include Rails::ConsoleMethods
   rescue LoadError => e
     require "console_app"
     require "console_with_helpers"
