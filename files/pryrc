@@ -1,4 +1,4 @@
-Pry.config.editor = "mate -w"
+Pry.config.editor = "vim"
 
 Pry.config.prompt = proc do |obj, level, _|
   prompt = ""
