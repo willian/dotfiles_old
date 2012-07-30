@@ -5,10 +5,3 @@ Host willian
   User willian
   HostName willianfernandes.com.br
 
-Host local55
-  User deploy
-  HostName 96.126.98.197
-
-Host goara
-  User deploy
-  HostName 173.255.201.212

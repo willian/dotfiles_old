@@ -1,3 +1,11 @@
+[user]
+	email = willian@willianfernandes.com.br
+	name = Willian Fernandes
+[color]
+	diff = auto
+	status = auto
+	branch = auto
+	ui = true
 [alias]
 	sh = !git-sh
 	ci = commit
@@ -9,24 +17,12 @@
 	lg = log --oneline --decorate
 	sb = status -sb
 	dw = diff --word-diff
-	who = shortlog -s --
-[branch]
-	autosetuprebase = always
-[color]
-	branch = auto
-	diff = auto
-	status = auto
-	ui = true
 [core]
-	editor = mate -wl1
-	excludefile = /Users/willian/.gitignore
-[github]
-	user = willian
-	token = ******
+	editor = vim
+	excludesfile = /Users/willian/.gitignore
 [help]
 	autocorrect = 1
+[branch]
+	autosetuprebase = always
 [push]
 	default = current
-[user]
-	email = willian@willianfernandes.com.br
-	name = Willian Fernandes
