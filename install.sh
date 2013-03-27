@@ -26,5 +26,3 @@ source $HOME/.bash_profile
 defaults write com.apple.finder _FXShowPosixPathInTitle -bool YES
 defaults write -g PMPrintingExpandedStateForPrint -bool TRUE
 
-open files/IR_Black.terminal
-
