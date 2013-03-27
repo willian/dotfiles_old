@@ -6,23 +6,35 @@
 	status = auto
 	branch = auto
 	ui = true
+[color "diff"]
+  plain = white
+  meta = white
+  frag = cyan reverse
+  old = red
+  new = green
+  commit = yellow
+  whitespace = normal red
 [alias]
-	sh = !git-sh
-	ci = commit
-	co = checkout
 	b = branch
-	st = status
-	who = shortlog -s --
+	ci = commit
+	cleanup = !git remote prune origin && git gc && git clean -df && git stash clear
+	co = checkout
+	dw = diff --word-diff
 	fl = log -p
 	lg = log --oneline --decorate
 	sb = status -sb
-	dw = diff --word-diff
+	sh = !git-sh
+	st = status
+	who = shortlog -s --
 [core]
 	editor = vim
 	excludesfile = /Users/willian/.gitignore
 [help]
+  autosetupmerge = true
 	autocorrect = 1
 [branch]
 	autosetuprebase = always
 [push]
 	default = current
+[github]
+  user = willian
